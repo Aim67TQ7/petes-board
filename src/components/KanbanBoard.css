@@ -105,6 +105,17 @@
   border-left: 3px solid var(--danger);
 }
 
+.task-card.urgent-priority {
+  border-left: 3px solid #ff0000;
+  background: rgba(255, 0, 0, 0.05);
+  animation: urgent-pulse 2s infinite;
+}
+
+@keyframes urgent-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.2); }
+  50% { box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.1); }
+}
+
 .task-title {
   font-size: 0.9rem;
   font-weight: 500;
@@ -136,6 +147,16 @@
   padding: 0.15rem 0.5rem;
   border-radius: 4px;
   font-weight: 600;
+}
+
+.priority-badge.urgent {
+  background: #ff0000;
+  animation: badge-flash 1s infinite;
+}
+
+@keyframes badge-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 .task-update {

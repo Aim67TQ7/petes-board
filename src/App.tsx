@@ -6,10 +6,11 @@ import ChatPanel from './components/ChatPanel'
 import FileUpload from './components/FileUpload'
 import TaskModal from './components/TaskModal'
 import PasscodeGate from './components/PasscodeGate'
-import { Kanban, MessageSquare, Upload, Radio } from 'lucide-react'
+import Downloads from './components/Downloads'
+import { Kanban, MessageSquare, Upload, Radio, FolderDown } from 'lucide-react'
 import './App.css'
 
-type View = 'board' | 'chat' | 'files'
+type View = 'board' | 'chat' | 'files' | 'downloads'
 
 function App() {
   const [isUnlocked, setIsUnlocked] = useState(() => {
@@ -196,6 +197,13 @@ function App() {
             <Upload size={20} />
             <span>Files</span>
           </button>
+          <button 
+            className={`nav-item ${activeView === 'downloads' ? 'active' : ''}`}
+            onClick={() => setActiveView('downloads')}
+          >
+            <FolderDown size={20} />
+            <span>Downloads</span>
+          </button>
         </div>
 
         <div className="sidebar-footer">
@@ -221,6 +229,9 @@ function App() {
         )}
         {activeView === 'files' && (
           <FileUpload onUpload={handleSendMessage} />
+        )}
+        {activeView === 'downloads' && (
+          <Downloads />
         )}
       </main>
 

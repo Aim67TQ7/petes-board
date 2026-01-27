@@ -60,7 +60,7 @@ export default function KanbanBoard({ tasks, onStatusChange, onTaskClick }: Prop
               {getTasksByStatus(column.id).map(task => (
                 <div
                   key={task.id}
-                  className={`task-card ${task.priority === 'high' ? 'high-priority' : ''}`}
+                  className={`task-card ${task.priority === 'high' ? 'high-priority' : ''} ${task.priority === 'urgent' ? 'urgent-priority' : ''}`}
                   draggable
                   onDragStart={(e) => handleDragStart(e, task.id)}
                   onClick={() => onTaskClick(task)}
@@ -69,6 +69,7 @@ export default function KanbanBoard({ tasks, onStatusChange, onTaskClick }: Prop
                   {task.notes && <div className="task-notes">{task.notes}</div>}
                   <div className="task-meta">
                     {task.priority === 'high' && <span className="priority-badge">High</span>}
+                    {task.priority === 'urgent' && <span className="priority-badge urgent">🚨 Urgent</span>}
                     <span className="task-date">
                       {new Date(task.created_at).toLocaleDateString()}
                     </span>
