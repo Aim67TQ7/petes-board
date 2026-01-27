@@ -10,6 +10,12 @@ interface DownloadItem {
 
 const downloads: DownloadItem[] = [
   {
+    name: 'North American Co-Packer White Paper 2026',
+    description: 'Comprehensive market analysis with industry trends, competitive landscape, and co-packer directory',
+    filename: 'copacker-whitepaper-2026.pdf',
+    date: '2026-01-27'
+  },
+  {
     name: 'Clawdbot Educational Guide',
     description: 'Complete guide covering memory system, security, setup, and best practices',
     filename: 'clawdbot-guide.pdf',
@@ -58,13 +64,6 @@ export default function Downloads() {
             </div>
           </div>
         ))}
-
-        {downloads.length === 0 && (
-          <div className="empty-state">
-            <FileText size={48} />
-            <p>No downloads yet</p>
-          </div>
-        )}
       </div>
     </div>
   )
