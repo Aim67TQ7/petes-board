@@ -17,6 +17,16 @@
 .upload-header p {
   color: var(--text-muted);
   font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.upload-header .supported-types {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--surface);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  display: inline-block;
 }
 
 .drop-zone {
@@ -80,11 +90,30 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 0.5rem;
+  transition: all 0.2s;
+}
+
+.file-item.error {
+  border-color: var(--danger);
+  background: rgba(248, 81, 73, 0.05);
+}
+
+.file-item.success {
+  border-color: var(--success);
+  background: rgba(63, 185, 80, 0.05);
+}
+
+.file-item.uploading {
+  opacity: 0.7;
 }
 
 .file-icon {
   color: var(--accent);
   display: flex;
+}
+
+.file-item.error .file-icon {
+  color: var(--danger);
 }
 
 .file-info {
@@ -99,9 +128,43 @@
   text-overflow: ellipsis;
 }
 
+.file-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .file-size {
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.file-error {
+  font-size: 0.75rem;
+  color: var(--danger);
+}
+
+.file-status {
+  display: flex;
+  align-items: center;
+}
+
+.file-status .spin {
+  animation: spin 1s linear infinite;
+  color: var(--accent);
+}
+
+.file-status .success {
+  color: var(--success);
+}
+
+.file-status .error {
+  color: var(--danger);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .remove-file {
@@ -137,11 +200,17 @@
   color: var(--text);
   font-size: 0.9rem;
   resize: vertical;
+  font-family: inherit;
 }
 
 .upload-message textarea:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+.upload-message textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .upload-btn {
@@ -158,9 +227,18 @@
   border-radius: var(--radius);
   font-size: 0.95rem;
   font-weight: 600;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
-.upload-btn:hover {
+.upload-btn:hover:not(:disabled) {
   background: var(--accent-hover);
+}
+
+.upload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.upload-btn .spin {
+  animation: spin 1s linear infinite;
 }

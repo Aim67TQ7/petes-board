@@ -3,7 +3,7 @@
   min-height: 100vh;
 }
 
-/* Sidebar */
+/* Sidebar - Fixed/Static */
 .sidebar {
   width: 240px;
   background: var(--surface);
@@ -11,6 +11,11 @@
   display: flex;
   flex-direction: column;
   padding: 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
 }
 
 .logo {
@@ -100,6 +105,8 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin-left: 240px;
+  height: 100vh;
 }
 
 /* Responsive */
@@ -107,6 +114,10 @@
   .sidebar {
     width: 60px;
     padding: 0.5rem;
+  }
+  
+  .main-content {
+    margin-left: 60px;
   }
   
   .logo span,

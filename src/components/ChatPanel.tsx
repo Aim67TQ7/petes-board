@@ -1,16 +1,20 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Message } from '../types'
-import { Send, Paperclip, Radio, User, FileText, Image, X } from 'lucide-react'
+import { Send, Paperclip, Radio, User, FileText, Image, X, FileSpreadsheet, Loader } from 'lucide-react'
 import './ChatPanel.css'
+
+// Accepted file types
+const ACCEPT_STRING = '.pdf,.jpg,.jpeg,.png,.gif,.webp,.csv,.xls,.xlsx,.doc,.docx,.txt,application/pdf,image/*,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
 interface Props {
   messages: Message[]
-  onSendMessage: (content: string, attachments?: File[]) => void
+  onSendMessage: (content: string, attachments?: File[]) => Promise<void>
 }
 
 export default function ChatPanel({ messages, onSendMessage }: Props) {
   const [input, setInput] = useState('')
   const [attachments, setAttachments] = useState<File[]>([])
+  const [isSending, setIsSending] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -18,19 +22,28 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!input.trim() && attachments.length === 0) return
+    if ((!input.trim() && attachments.length === 0) || isSending) return
     
-    onSendMessage(input, attachments.length > 0 ? attachments : undefined)
-    setInput('')
-    setAttachments([])
+    setIsSending(true)
+    try {
+      await onSendMessage(input, attachments.length > 0 ? attachments : undefined)
+      setInput('')
+      setAttachments([])
+    } catch (err) {
+      console.error('Failed to send message:', err)
+    } finally {
+      setIsSending(false)
+    }
   }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setAttachments(prev => [...prev, ...Array.from(e.target.files!)])
     }
+    // Reset input so same file can be selected again
+    e.target.value = ''
   }
 
   const removeAttachment = (index: number) => {
@@ -44,8 +57,14 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
     })
   }
 
-  const getFileIcon = (type: string) => {
-    if (type.startsWith('image/')) return <Image size={16} />
+  const getFileIcon = (type: string, name?: string) => {
+    const ext = name?.split('.').pop()?.toLowerCase()
+    if (type.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '')) {
+      return <Image size={16} />
+    }
+    if (['csv', 'xls', 'xlsx'].includes(ext || '') || type.includes('spreadsheet') || type.includes('excel')) {
+      return <FileSpreadsheet size={16} />
+    }
     return <FileText size={16} />
   }
 
@@ -81,7 +100,7 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
                   <div className="message-attachments">
                     {message.attachments.map((att, i) => (
                       <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="attachment">
-                        {getFileIcon(att.type)}
+                        {getFileIcon(att.type, att.name)}
                         <span>{att.name}</span>
                       </a>
                     ))}
@@ -99,9 +118,9 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
           <div className="attachments-preview">
             {attachments.map((file, i) => (
               <div key={i} className="attachment-preview">
-                {getFileIcon(file.type)}
+                {getFileIcon(file.type, file.name)}
                 <span>{file.name}</span>
-                <button type="button" onClick={() => removeAttachment(i)}>
+                <button type="button" onClick={() => removeAttachment(i)} disabled={isSending}>
                   <X size={14} />
                 </button>
               </div>
@@ -113,6 +132,8 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
             type="button" 
             className="attach-btn"
             onClick={() => fileInputRef.current?.click()}
+            disabled={isSending}
+            title="Attach files (PDF, images, CSV, Excel, Word)"
           >
             <Paperclip size={20} />
           </button>
@@ -121,6 +142,7 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
             ref={fileInputRef}
             onChange={handleFileSelect}
             multiple
+            accept={ACCEPT_STRING}
             hidden
           />
           <input
@@ -129,9 +151,14 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
             className="chat-input"
+            disabled={isSending}
           />
-          <button type="submit" className="send-btn" disabled={!input.trim() && attachments.length === 0}>
-            <Send size={20} />
+          <button 
+            type="submit" 
+            className="send-btn" 
+            disabled={(!input.trim() && attachments.length === 0) || isSending}
+          >
+            {isSending ? <Loader size={20} className="spin" /> : <Send size={20} />}
           </button>
         </div>
       </form>

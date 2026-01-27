@@ -2,7 +2,7 @@ export interface Task {
   id: string
   title: string
   notes: string
-  status: 'inbox' | 'in_progress' | 'blocked' | 'done'
+  status: 'inbox' | 'in_progress' | 'blocked' | 'done' | 'archived'
   priority: 'low' | 'normal' | 'high' | 'urgent'
   updates: TaskUpdate[]
   created_at: string

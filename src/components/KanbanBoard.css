@@ -139,6 +139,27 @@
   align-items: center;
   font-size: 0.75rem;
   color: var(--text-muted);
+  gap: 0.5rem;
+}
+
+.archive-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.archive-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
 }
 
 .priority-badge {

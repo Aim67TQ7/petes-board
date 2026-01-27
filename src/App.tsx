@@ -3,14 +3,15 @@ import { supabase } from './lib/supabase'
 import type { Task, Message } from './types'
 import KanbanBoard from './components/KanbanBoard'
 import ChatPanel from './components/ChatPanel'
+import ChatArchive from './components/ChatArchive'
 import FileUpload from './components/FileUpload'
 import TaskModal from './components/TaskModal'
 import PasscodeGate from './components/PasscodeGate'
 import Downloads from './components/Downloads'
-import { Kanban, MessageSquare, Upload, Radio, FolderDown } from 'lucide-react'
+import { Kanban, MessageSquare, Upload, Radio, FolderDown, Archive } from 'lucide-react'
 import './App.css'
 
-type View = 'board' | 'chat' | 'files' | 'downloads'
+type View = 'board' | 'chat' | 'files' | 'downloads' | 'archive'
 
 function App() {
   const [isUnlocked, setIsUnlocked] = useState(() => {
@@ -23,14 +24,12 @@ function App() {
   const [showTaskModal, setShowTaskModal] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
 
-  // Must be before any conditional returns!
   useEffect(() => {
     if (!isUnlocked) return
 
     loadTasks()
     loadMessages()
     
-    // Subscribe to real-time changes
     const tasksChannel = supabase
       .channel('tasks-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, handleTaskChange)
@@ -125,17 +124,31 @@ function App() {
     await supabase.from('tasks').update({ status: newStatus }).eq('id', taskId)
   }
 
-  const handleSendMessage = async (content: string, attachments?: File[]) => {
+  const handleArchiveTask = async (taskId: string) => {
+    await supabase.from('tasks').update({ status: 'archived' }).eq('id', taskId)
+  }
+
+  const handleSendMessage = async (content: string, attachments?: File[]): Promise<void> => {
     const uploadedAttachments = []
     
     if (attachments && attachments.length > 0) {
       for (const file of attachments) {
-        const fileName = `${Date.now()}-${file.name}`
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const fileName = `${Date.now()}-${safeName}`
+        
         const { data, error } = await supabase.storage
           .from('uploads')
-          .upload(fileName, file)
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          })
         
-        if (!error && data) {
+        if (error) {
+          console.error('Upload error:', error)
+          throw new Error(`Failed to upload ${file.name}: ${error.message}`)
+        }
+        
+        if (data) {
           const { data: urlData } = supabase.storage
             .from('uploads')
             .getPublicUrl(fileName)
@@ -143,18 +156,23 @@ function App() {
           uploadedAttachments.push({
             name: file.name,
             url: urlData.publicUrl,
-            type: file.type,
+            type: file.type || 'application/octet-stream',
             size: file.size
           })
         }
       }
     }
 
-    await supabase.from('messages').insert([{
+    const { error } = await supabase.from('messages').insert([{
       content,
       sender: 'user',
       attachments: uploadedAttachments.length > 0 ? uploadedAttachments : null
     }])
+    
+    if (error) {
+      console.error('Message insert error:', error)
+      throw new Error('Failed to send message')
+    }
   }
 
   const openEditTask = (task: Task) => {
@@ -162,7 +180,6 @@ function App() {
     setShowTaskModal(true)
   }
 
-  // Show passcode gate if not unlocked
   if (!isUnlocked) {
     return <PasscodeGate onUnlock={() => setIsUnlocked(true)} />
   }
@@ -189,6 +206,13 @@ function App() {
           >
             <MessageSquare size={20} />
             <span>Chat with Pete</span>
+          </button>
+          <button 
+            className={`nav-item ${activeView === 'archive' ? 'active' : ''}`}
+            onClick={() => setActiveView('archive')}
+          >
+            <Archive size={20} />
+            <span>Chat Archives</span>
           </button>
           <button 
             className={`nav-item ${activeView === 'files' ? 'active' : ''}`}
@@ -219,6 +243,7 @@ function App() {
             tasks={tasks} 
             onStatusChange={handleStatusChange}
             onTaskClick={openEditTask}
+            onArchiveTask={handleArchiveTask}
           />
         )}
         {activeView === 'chat' && (
@@ -226,6 +251,9 @@ function App() {
             messages={messages} 
             onSendMessage={handleSendMessage}
           />
+        )}
+        {activeView === 'archive' && (
+          <ChatArchive />
         )}
         {activeView === 'files' && (
           <FileUpload onUpload={handleSendMessage} />

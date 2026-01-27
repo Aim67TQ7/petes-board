@@ -116,15 +116,37 @@
   border-color: var(--text-muted);
 }
 
-.empty-state {
+.downloads-loading,
+.downloads-empty {
   text-align: center;
   padding: 4rem 2rem;
   color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
-.empty-state svg {
-  opacity: 0.3;
-  margin-bottom: 1rem;
+.downloads-loading svg,
+.downloads-empty svg {
+  opacity: 0.4;
+}
+
+.downloads-error {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 600px) {
