@@ -22,11 +22,10 @@ function App() {
   const [showTaskModal, setShowTaskModal] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
 
-  if (!isUnlocked) {
-    return <PasscodeGate onUnlock={() => setIsUnlocked(true)} />
-  }
-
+  // Must be before any conditional returns!
   useEffect(() => {
+    if (!isUnlocked) return
+
     loadTasks()
     loadMessages()
     
@@ -47,7 +46,7 @@ function App() {
       supabase.removeChannel(tasksChannel)
       supabase.removeChannel(messagesChannel)
     }
-  }, [])
+  }, [isUnlocked])
 
   const loadTasks = async () => {
     const { data, error } = await supabase
@@ -126,7 +125,6 @@ function App() {
   }
 
   const handleSendMessage = async (content: string, attachments?: File[]) => {
-    // Upload attachments first if any
     const uploadedAttachments = []
     
     if (attachments && attachments.length > 0) {
@@ -161,6 +159,11 @@ function App() {
   const openEditTask = (task: Task) => {
     setEditingTask(task)
     setShowTaskModal(true)
+  }
+
+  // Show passcode gate if not unlocked
+  if (!isUnlocked) {
+    return <PasscodeGate onUnlock={() => setIsUnlocked(true)} />
   }
 
   return (
