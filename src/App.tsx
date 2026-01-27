@@ -5,18 +5,26 @@ import KanbanBoard from './components/KanbanBoard'
 import ChatPanel from './components/ChatPanel'
 import FileUpload from './components/FileUpload'
 import TaskModal from './components/TaskModal'
+import PasscodeGate from './components/PasscodeGate'
 import { Kanban, MessageSquare, Upload, Radio } from 'lucide-react'
 import './App.css'
 
 type View = 'board' | 'chat' | 'files'
 
 function App() {
+  const [isUnlocked, setIsUnlocked] = useState(() => {
+    return localStorage.getItem('petes-board-auth') === 'true'
+  })
   const [tasks, setTasks] = useState<Task[]>([])
   const [messages, setMessages] = useState<Message[]>([])
   const [activeView, setActiveView] = useState<View>('board')
   const [isConnected, setIsConnected] = useState(false)
   const [showTaskModal, setShowTaskModal] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
+
+  if (!isUnlocked) {
+    return <PasscodeGate onUnlock={() => setIsUnlocked(true)} />
+  }
 
   useEffect(() => {
     loadTasks()
