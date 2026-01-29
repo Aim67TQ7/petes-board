@@ -1,16 +1,15 @@
+functionsDirectory = "/root/clawd/petes-board-react/netlify/functions"
+functionsDirectoryOrigin = "default"
 plugins = []
 headers = []
 redirects = []
-
-[functions]
-
-[functions."*"]
 
 [build]
 publish = "/root/clawd/petes-board-react/dist"
 publishOrigin = "ui"
 commandOrigin = "ui"
 command = "npm run build"
+functions = "/root/clawd/petes-board-react/netlify/functions"
 
 [build.environment]
 
@@ -25,3 +24,7 @@ command = "npm run build"
 [build.processing.js]
 
 [build.services]
+
+[functions]
+
+[functions."*"]

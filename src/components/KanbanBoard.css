@@ -2,12 +2,16 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 1.5rem;
   overflow: hidden;
 }
 
 .board-header {
-  margin-bottom: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .board-header h1 {
@@ -20,7 +24,8 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
+  padding: 0 1.5rem 1.5rem;
 }
 
 @media (max-width: 1200px) {
@@ -50,6 +55,10 @@
   align-items: center;
   padding: 1rem;
   border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 5;
 }
 
 .column-title {
@@ -111,6 +120,17 @@
   animation: urgent-pulse 2s infinite;
 }
 
+/* Status color coding for blocked/paused */
+.task-card.status-blocked {
+  border-left: 4px solid #dc3545;
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.task-card.status-paused {
+  border-left: 4px solid #ffc107;
+  background: rgba(255, 193, 7, 0.05);
+}
+
 @keyframes urgent-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.2); }
   50% { box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.1); }
@@ -162,6 +182,25 @@
   color: var(--bg);
 }
 
+.trash-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.trash-btn:hover {
+  background: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
 .priority-badge {
   background: var(--danger);
   color: white;
@@ -173,6 +212,29 @@
 .priority-badge.urgent {
   background: #ff0000;
   animation: badge-flash 1s infinite;
+}
+
+.status-badge {
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.7rem;
+}
+
+.status-badge.blocked {
+  background: #dc3545;
+  color: white;
+}
+
+.status-badge.paused {
+  background: #ffc107;
+  color: #333;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
 }
 
 @keyframes badge-flash {
@@ -206,4 +268,30 @@
   padding: 2rem;
   color: var(--text-muted);
   font-size: 0.85rem;
+}
+
+/* Create Task Button */
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-task-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.create-task-btn:hover {
+  background: var(--accent-hover);
 }

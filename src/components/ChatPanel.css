@@ -7,6 +7,10 @@
 .chat-header {
   padding: 1.5rem;
   border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
 }
 
 .chat-header h1 {
@@ -146,8 +150,40 @@
 
 /* Input Form */
 .chat-input-form {
-  padding: 1rem 1.5rem 1.5rem;
+  padding: 1rem 1.5rem;
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* Mobile PWA fixes */
+@media (max-width: 768px) {
+  .chat-panel {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .messages-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .chat-input-form {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  }
+  
+  .chat-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
 }
 
 .attachments-preview {

@@ -202,3 +202,117 @@
 .msg-attachments a:hover {
   text-decoration: underline;
 }
+
+/* Archived Task Styles */
+.archive-task {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--success);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+}
+
+.archive-task .task-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.archive-task .task-done-icon {
+  color: var(--success);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.archive-task .task-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-task .task-title {
+  display: block;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.archive-task .task-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.archive-task .priority-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius);
+  background: var(--surface-hover);
+  text-transform: capitalize;
+}
+
+.archive-task .priority-badge.high {
+  background: var(--warning);
+  color: var(--bg);
+}
+
+.archive-task .priority-badge.urgent {
+  background: var(--error);
+  color: white;
+}
+
+.archive-task .task-notes {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.archive-task .task-updates {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.archive-task .updates-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.archive-task .task-update {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--bg);
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+}
+
+.archive-task .task-update:last-child {
+  margin-bottom: 0;
+}
+
+.archive-task .task-update svg {
+  color: var(--success);
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.archive-task .update-text {
+  flex: 1;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.archive-task .update-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}

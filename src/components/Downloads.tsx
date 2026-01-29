@@ -1,111 +1,197 @@
-import { FileText, Download, ExternalLink, FileSpreadsheet, BarChart3, Wrench } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { FileText, Download, ExternalLink, FileSpreadsheet, BarChart3, Image, File, Loader2 } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 import './Downloads.css'
-
-interface DownloadItem {
-  name: string
-  description: string
-  filename: string
-  date: string
-  icon?: 'report' | 'guide' | 'analysis' | 'engineering'
-}
 
 const SUPABASE_URL = 'https://ezlmmegowggujpcnzoda.supabase.co'
 
-// Downloads catalog - Pete adds new files here
-const downloads: DownloadItem[] = [
-  {
-    name: 'Powder Press Requirements Specification',
-    description: 'Engineering requirements for compression bonded neo magnet press - 1M parts/month capacity, tight tolerances, vendor qualifications',
-    filename: 'press-requirements-spec.pdf',
-    date: '2026-01-27',
-    icon: 'engineering'
-  },
-  {
-    name: 'BMC Combined Magnet Analysis',
-    description: 'Full tonnage analysis combining mag.neo.csv and neo2.csv - 78.4 tons over 3 years with methodology and conclusions',
-    filename: 'bmc-magnet-analysis-combined.pdf',
-    date: '2026-01-27',
-    icon: 'analysis'
-  },
-  {
-    name: 'BMC Magnet Usage Analysis (File 1)',
-    description: 'Weight by grade analysis for mag.neo.csv with calculation methodology',
-    filename: 'magnet-analysis.pdf',
-    date: '2026-01-27',
-    icon: 'analysis'
-  },
-  {
-    name: 'North American Co-Packer White Paper 2026',
-    description: 'Comprehensive market analysis with industry trends, competitive landscape, and co-packer directory',
-    filename: 'copacker-whitepaper-2026.pdf',
-    date: '2026-01-27',
-    icon: 'report'
-  },
-  {
-    name: 'Clawdbot Educational Guide',
-    description: 'Complete guide covering memory system, security, setup, and best practices',
-    filename: 'clawdbot-guide.pdf',
-    date: '2026-01-27',
-    icon: 'guide'
-  }
-]
-
 export default function Downloads() {
-  const getUrl = (filename: string) => 
-    `${SUPABASE_URL}/storage/v1/object/public/downloads/${filename}`
+  const [files, setFiles] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const getIcon = (icon?: string) => {
-    switch (icon) {
-      case 'analysis':
-        return <BarChart3 size={32} />
-      case 'report':
-        return <FileSpreadsheet size={32} />
-      case 'engineering':
-        return <Wrench size={32} />
-      default:
-        return <FileText size={32} />
+  useEffect(() => {
+    fetchFiles()
+  }, [])
+
+  const fetchFiles = async () => {
+    try {
+      setLoading(true)
+      // Fetch from uploads bucket (where Pete puts files)
+      // First get root level items
+      const { data: rootData, error: rootError } = await supabase.storage
+        .from('uploads')
+        .list('', {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: 'created_at', order: 'desc' }
+        })
+
+      if (rootError) throw rootError
+      
+      // Separate folders and files
+      const folders = (rootData || []).filter((f) => !f.metadata || !f.metadata.size)
+      const rootFiles = (rootData || []).filter((f) => f.metadata && f.metadata.size > 0)
+      
+      // Fetch files from each subfolder
+      const subfolderFiles: any[] = []
+      for (const folder of folders) {
+        const { data: subData } = await supabase.storage
+          .from('uploads')
+          .list(folder.name, {
+            limit: 50,
+            sortBy: { column: 'created_at', order: 'desc' }
+          })
+        
+        if (subData) {
+          // Add folder prefix to file names for proper URL generation
+          const filesWithPath = subData
+            .filter((f) => f.metadata && f.metadata.size > 0)
+            .map((f) => ({ ...f, name: `${folder.name}/${f.name}`, folder: folder.name }))
+          subfolderFiles.push(...filesWithPath)
+        }
+      }
+      
+      // Combine and sort by date
+      const allFiles = [...rootFiles, ...subfolderFiles]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      
+      setFiles(allFiles)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const getUrl = (filename: string) => 
+    `${SUPABASE_URL}/storage/v1/object/public/uploads/${filename}`
+
+  const getIcon = (filename: string, mimetype?: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase()
+    const mime = mimetype || ''
+    
+    if (mime.startsWith('image/') || ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext || '')) {
+      return <Image size={32} />
+    }
+    if (['pdf'].includes(ext || '')) {
+      return <FileText size={32} />
+    }
+    if (['csv', 'xlsx', 'xls'].includes(ext || '')) {
+      return <FileSpreadsheet size={32} />
+    }
+    if (['md', 'txt', 'doc', 'docx'].includes(ext || '')) {
+      return <BarChart3 size={32} />
+    }
+    return <File size={32} />
+  }
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  const formatSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  }
+
+  const getDisplayName = (filename: string) => {
+    // Remove timestamp prefix if present (e.g., "1769617013023-filename.ext")
+    const cleaned = filename.replace(/^\d{13}-/, '')
+    // Replace dashes/underscores with spaces and capitalize
+    return cleaned
+      .replace(/[-_]/g, ' ')
+      .replace(/\.[^.]+$/, '') // Remove extension
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
+  if (loading) {
+    return (
+      <div className="downloads-page">
+        <header className="downloads-header">
+          <h1>Downloads</h1>
+          <p>Documents and files generated by Pete</p>
+        </header>
+        <div className="downloads-loading">
+          <Loader2 className="spin" size={32} />
+          <span>Loading files...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="downloads-page">
+        <header className="downloads-header">
+          <h1>Downloads</h1>
+          <p>Documents and files generated by Pete</p>
+        </header>
+        <div className="downloads-error">
+          <p>Error loading files: {error}</p>
+          <button onClick={fetchFiles}>Retry</button>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="downloads-page">
       <header className="downloads-header">
         <h1>Downloads</h1>
-        <p>Documents and files generated by Pete</p>
+        <p>Documents and files generated by Pete ({files.length} files)</p>
       </header>
 
-      <div className="downloads-list">
-        {downloads.map((item, i) => (
-          <div key={i} className="download-card">
-            <div className="download-icon">
-              {getIcon(item.icon)}
+      {files.length === 0 ? (
+        <div className="downloads-empty">
+          <p>No files uploaded yet</p>
+        </div>
+      ) : (
+        <div className="downloads-list">
+          {files.map((file) => (
+            <div key={file.id || file.name} className="download-card">
+              <div className="download-icon">
+                {getIcon(file.name, file.metadata?.mimetype)}
+              </div>
+              <div className="download-info">
+                <h3>{getDisplayName(file.name)}</h3>
+                <p className="download-filename">{file.name}</p>
+                <span className="download-meta">
+                  {formatDate(file.created_at)} • {formatSize(file.metadata?.size || 0)}
+                </span>
+              </div>
+              <div className="download-actions">
+                <a 
+                  href={getUrl(file.name)} 
+                  download={file.name}
+                  className="download-btn"
+                >
+                  <Download size={18} />
+                  <span>Download</span>
+                </a>
+                <a 
+                  href={getUrl(file.name)} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="view-btn"
+                >
+                  <ExternalLink size={18} />
+                </a>
+              </div>
             </div>
-            <div className="download-info">
-              <h3>{item.name}</h3>
-              <p>{item.description}</p>
-              <span className="download-date">Added: {item.date}</span>
-            </div>
-            <div className="download-actions">
-              <a 
-                href={getUrl(item.filename)} 
-                download={item.filename}
-                className="download-btn"
-              >
-                <Download size={18} />
-                <span>Download</span>
-              </a>
-              <a 
-                href={getUrl(item.filename)} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="view-btn"
-              >
-                <ExternalLink size={18} />
-              </a>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

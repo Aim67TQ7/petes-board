@@ -11,16 +11,34 @@ interface Props {
   onSendMessage: (content: string, attachments?: File[]) => Promise<void>
 }
 
+const DRAFT_STORAGE_KEY = 'petes-board-chat-draft'
+
 export default function ChatPanel({ messages, onSendMessage }: Props) {
-  const [input, setInput] = useState('')
+  // Filter to only show messages from last 24 hours, newest first
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+  const recentMessages = messages
+    .filter(m => new Date(m.created_at) >= twentyFourHoursAgo)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+  const [input, setInput] = useState(() => {
+    // Load draft from localStorage on mount
+    return localStorage.getItem(DRAFT_STORAGE_KEY) || ''
+  })
   const [attachments, setAttachments] = useState<File[]>([])
   const [isSending, setIsSending] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesTopRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // No auto-scroll needed - newest messages are at top where user lands
+
+  // Persist draft to localStorage
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    if (input.trim()) {
+      localStorage.setItem(DRAFT_STORAGE_KEY, input)
+    } else {
+      localStorage.removeItem(DRAFT_STORAGE_KEY)
+    }
+  }, [input])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -76,14 +94,14 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
       </header>
 
       <div className="messages-container">
-        {messages.length === 0 ? (
+        {recentMessages.length === 0 ? (
           <div className="empty-chat">
             <Radio size={48} />
-            <h3>No messages yet</h3>
-            <p>Send a message or upload a file to get started</p>
+            <h3>No recent messages</h3>
+            <p>Messages older than 24 hours are in the Archive</p>
           </div>
         ) : (
-          messages.map(message => (
+          recentMessages.map(message => (
             <div key={message.id} className={`message ${message.sender}`}>
               <div className="message-avatar">
                 {message.sender === 'pete' ? <Radio size={20} /> : <User size={20} />}
@@ -110,7 +128,7 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
             </div>
           ))
         )}
-        <div ref={messagesEndRef} />
+        <div ref={messagesTopRef} />
       </div>
 
       <form className="chat-input-form" onSubmit={handleSubmit}>

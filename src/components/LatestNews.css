@@ -1,0 +1,123 @@
+.latest-news {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.news-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 8px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+
+.news-header h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.news-header svg {
+  color: var(--primary);
+}
+
+.refresh-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.news-date {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 12px 20px;
+  margin: 0;
+}
+
+.loading, .no-news {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.no-news .hint {
+  font-size: 0.85rem;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.news-sections {
+  display: grid;
+  gap: 20px;
+  padding: 0 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.news-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  border-left: 4px solid var(--primary);
+}
+
+/* Card colors by type */
+.news-card.weather { border-left-color: #06b6d4; }
+.news-card.world { border-left-color: #3b82f6; }
+.news-card.prices { border-left-color: #f59e0b; }
+.news-card.financial { border-left-color: #22c55e; }
+.news-card.sports { border-left-color: #8b5cf6; }
+.news-card.kansas { border-left-color: #ef4444; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Icon colors by type */
+.news-card.weather .card-header svg { color: #06b6d4; }
+.news-card.world .card-header svg { color: #3b82f6; }
+.news-card.prices .card-header svg { color: #f59e0b; }
+.news-card.financial .card-header svg { color: #22c55e; }
+.news-card.sports .card-header svg { color: #8b5cf6; }
+.news-card.kansas .card-header svg { color: #ef4444; }
+
+.card-content p {
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.card-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Sports card color */
+.news-card.sports { border-left-color: #8b5cf6; }
+.news-card.sports .card-header svg { color: #8b5cf6; }

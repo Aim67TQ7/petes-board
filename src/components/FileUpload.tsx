@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Upload, FileText, Image, File, X, Send, FileSpreadsheet, AlertCircle, CheckCircle, Loader } from 'lucide-react'
 import './FileUpload.css'
 
@@ -28,13 +28,45 @@ interface FileWithStatus extends File {
 
 interface Props {
   onUpload: (message: string, files: File[]) => Promise<void>
+  onUploadComplete?: () => void
 }
 
-export default function FileUpload({ onUpload }: Props) {
+export default function FileUpload({ onUpload, onUploadComplete }: Props) {
   const [files, setFiles] = useState<FileWithStatus[]>([])
   const [message, setMessage] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+
+  // Handle paste from clipboard
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items
+      if (!items) return
+
+      const imageFiles: File[] = []
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile()
+          if (file) {
+            // Create a new file with a proper name
+            const timestamp = Date.now()
+            const ext = file.type.split('/')[1] || 'png'
+            const namedFile = new (window.File as any)([file], `screenshot-${timestamp}.${ext}`, { type: file.type }) as File
+            imageFiles.push(namedFile)
+          }
+        }
+      }
+
+      if (imageFiles.length > 0) {
+        e.preventDefault()
+        addFiles(imageFiles)
+      }
+    }
+
+    document.addEventListener('paste', handlePaste)
+    return () => document.removeEventListener('paste', handlePaste)
+  }, [])
 
   const validateFile = (file: File): { valid: boolean; error?: string } => {
     // Check file size
@@ -121,10 +153,13 @@ export default function FileUpload({ onUpload }: Props) {
         f.status === 'uploading' ? { ...f, status: 'success' as const } : f
       ))
       
-      // Clear after short delay
+      // Clear after short delay and navigate back to board
       setTimeout(() => {
         setFiles([])
         setMessage('')
+        if (onUploadComplete) {
+          onUploadComplete()
+        }
       }, 1500)
     } catch (err) {
       setFiles(prev => prev.map(f => 
@@ -188,7 +223,7 @@ export default function FileUpload({ onUpload }: Props) {
       >
         <Upload size={48} />
         <h3>Drop files here</h3>
-        <p>or click to browse</p>
+        <p>or click to browse • Ctrl+V to paste screenshots</p>
         <input
           type="file"
           onChange={handleFileSelect}

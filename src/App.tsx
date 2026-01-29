@@ -8,10 +8,15 @@ import FileUpload from './components/FileUpload'
 import TaskModal from './components/TaskModal'
 import PasscodeGate from './components/PasscodeGate'
 import Downloads from './components/Downloads'
-import { Kanban, MessageSquare, Upload, Radio, FolderDown, Archive } from 'lucide-react'
+import LatestNews from './components/LatestNews'
+import CronJobs from './components/CronJobs'
+import ActivityLog from './components/ActivityLog'
+import VoiceBriefings from './components/VoiceBriefings'
+import TokenUsage from './components/TokenUsage'
+import { Kanban, MessageSquare, Upload, Radio, FolderDown, Archive, Newspaper, Clock, Activity, Mic, BarChart3 } from 'lucide-react'
 import './App.css'
 
-type View = 'board' | 'chat' | 'files' | 'downloads' | 'archive'
+type View = 'board' | 'chat' | 'files' | 'downloads' | 'archive' | 'news' | 'cron' | 'activity' | 'voice' | 'tokens'
 
 function App() {
   const [isUnlocked, setIsUnlocked] = useState(() => {
@@ -128,6 +133,10 @@ function App() {
     await supabase.from('tasks').update({ status: 'archived' }).eq('id', taskId)
   }
 
+  const handleTrashTask = async (taskId: string) => {
+    await supabase.from('tasks').update({ status: 'trashed' }).eq('id', taskId)
+  }
+
   const handleSendMessage = async (content: string, attachments?: File[]): Promise<void> => {
     const uploadedAttachments = []
     
@@ -180,6 +189,11 @@ function App() {
     setShowTaskModal(true)
   }
 
+  const openCreateTask = () => {
+    setEditingTask(null)
+    setShowTaskModal(true)
+  }
+
   if (!isUnlocked) {
     return <PasscodeGate onUnlock={() => setIsUnlocked(true)} />
   }
@@ -228,6 +242,41 @@ function App() {
             <FolderDown size={20} />
             <span>Downloads</span>
           </button>
+          <button 
+            className={`nav-item ${activeView === 'news' ? 'active' : ''}`}
+            onClick={() => setActiveView('news')}
+          >
+            <Newspaper size={20} />
+            <span>Latest News</span>
+          </button>
+          <button 
+            className={`nav-item ${activeView === 'cron' ? 'active' : ''}`}
+            onClick={() => setActiveView('cron')}
+          >
+            <Clock size={20} />
+            <span>Cron Jobs</span>
+          </button>
+          <button 
+            className={`nav-item ${activeView === 'activity' ? 'active' : ''}`}
+            onClick={() => setActiveView('activity')}
+          >
+            <Activity size={20} />
+            <span>Activity Log</span>
+          </button>
+          <button 
+            className={`nav-item ${activeView === 'voice' ? 'active' : ''}`}
+            onClick={() => setActiveView('voice')}
+          >
+            <Mic size={20} />
+            <span>Voice Briefings</span>
+          </button>
+          <button 
+            className={`nav-item ${activeView === 'tokens' ? 'active' : ''}`}
+            onClick={() => setActiveView('tokens')}
+          >
+            <BarChart3 size={20} />
+            <span>Token Usage</span>
+          </button>
         </div>
 
         <div className="sidebar-footer">
@@ -244,6 +293,8 @@ function App() {
             onStatusChange={handleStatusChange}
             onTaskClick={openEditTask}
             onArchiveTask={handleArchiveTask}
+            onTrashTask={handleTrashTask}
+            onCreateTask={openCreateTask}
           />
         )}
         {activeView === 'chat' && (
@@ -256,10 +307,28 @@ function App() {
           <ChatArchive />
         )}
         {activeView === 'files' && (
-          <FileUpload onUpload={handleSendMessage} />
+          <FileUpload 
+            onUpload={handleSendMessage} 
+            onUploadComplete={() => setActiveView('board')}
+          />
         )}
         {activeView === 'downloads' && (
           <Downloads />
+        )}
+        {activeView === 'news' && (
+          <LatestNews />
+        )}
+        {activeView === 'cron' && (
+          <CronJobs />
+        )}
+        {activeView === 'activity' && (
+          <ActivityLog />
+        )}
+        {activeView === 'voice' && (
+          <VoiceBriefings />
+        )}
+        {activeView === 'tokens' && (
+          <TokenUsage />
         )}
       </main>
 
