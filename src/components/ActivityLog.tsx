@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Activity, CheckCircle, Code, Search, FileText, MessageSquare, Zap, RefreshCw, Clock, TrendingUp } from 'lucide-react'
+import { Activity, CheckCircle, Code, Search, FileText, MessageSquare, Zap, RefreshCw, Clock, TrendingUp, ChevronDown, ChevronUp } from 'lucide-react'
 import './ActivityLog.css'
 
 interface LogEntry {
@@ -42,6 +42,7 @@ export default function ActivityLog() {
   const [stats, setStats] = useState<Stats>({ total: 0, today: 0, byCategory: {} })
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const loadLogs = async () => {
     setLoading(true)
@@ -120,43 +121,42 @@ export default function ActivityLog() {
 
   const categories = ['all', ...Object.keys(categoryIcons)]
 
+  const toggleExpand = (id: string) => {
+    setExpandedId(expandedId === id ? null : id)
+  }
+
   return (
-    <div className="activity-log">
+    <div className="activity-log compact">
       <div className="activity-header">
-        <Activity size={24} />
-        <h2>Pete's Activity Log</h2>
+        <Activity size={20} />
+        <h2>Activity Log</h2>
+        <span className="log-count">{stats.total}</span>
         <button className="refresh-btn" onClick={loadLogs} title="Refresh">
-          <RefreshCw size={18} />
+          <RefreshCw size={16} />
         </button>
       </div>
 
-      <div className="stats-grid">
-        <div className="stat-card">
-          <TrendingUp size={20} />
-          <div>
-            <span className="stat-value">{stats.total}</span>
-            <span className="stat-label">Total Actions</span>
-          </div>
-        </div>
-        <div className="stat-card">
-          <Clock size={20} />
-          <div>
-            <span className="stat-value">{stats.today}</span>
-            <span className="stat-label">Today</span>
-          </div>
-        </div>
-        {Object.entries(stats.byCategory).slice(0, 3).map(([cat, count]) => {
+      <div className="stats-compact">
+        <span className="stat-badge">
+          <TrendingUp size={14} />
+          {stats.total} total
+        </span>
+        <span className="stat-badge today">
+          <Clock size={14} />
+          {stats.today} today
+        </span>
+        {Object.entries(stats.byCategory).slice(0, 2).map(([cat, count]) => {
           const Icon = categoryIcons[cat] || Activity
           return (
-            <div key={cat} className="stat-card mini">
-              <Icon size={16} style={{ color: categoryColors[cat] }} />
-              <span>{count} {cat}</span>
-            </div>
+            <span key={cat} className="stat-badge" style={{ color: categoryColors[cat] }}>
+              <Icon size={14} />
+              {count} {cat}
+            </span>
           )
         })}
       </div>
 
-      <div className="filter-tabs">
+      <div className="filter-tabs-compact">
         {categories.map(cat => (
           <button
             key={cat}
@@ -164,37 +164,43 @@ export default function ActivityLog() {
             onClick={() => setFilter(cat)}
             style={filter === cat && cat !== 'all' ? { borderColor: categoryColors[cat] } : {}}
           >
-            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+            {cat}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <div className="loading">Loading activity...</div>
+        <div className="loading">Loading...</div>
       ) : logs.length === 0 ? (
-        <div className="no-logs">
-          <p>No activity logged yet.</p>
-          <p className="hint">Pete logs actions here as he works.</p>
-        </div>
+        <div className="no-logs">No activity logged yet.</div>
       ) : (
-        <div className="logs-timeline">
+        <div className="logs-list compact">
           {logs.map(log => {
             const Icon = categoryIcons[log.category] || Activity
             const color = categoryColors[log.category] || '#6b7280'
+            const isExpanded = expandedId === log.id
+            const hasDetails = log.details && (typeof log.details !== 'object' || Object.keys(log.details).length > 0)
+            
             return (
-              <div key={log.id} className="log-entry">
-                <div className="log-icon" style={{ backgroundColor: `${color}20`, color }}>
-                  <Icon size={16} />
-                </div>
-                <div className="log-content">
-                  <p className="log-action">{log.action}</p>
-                  {log.details && (
-                    <p className="log-details">
-                      {typeof log.details === 'string' ? log.details : JSON.stringify(log.details)}
-                    </p>
+              <div key={log.id} className={`log-row ${isExpanded ? 'expanded' : ''}`}>
+                <div className="log-summary" onClick={() => hasDetails ? toggleExpand(log.id) : null}>
+                  <div className="log-icon-compact" style={{ backgroundColor: `${color}20`, color }}>
+                    <Icon size={14} />
+                  </div>
+                  <span className="log-action-text">{log.action}</span>
+                  <span className="log-time-badge">{formatTime(log.created_at)}</span>
+                  {hasDetails && (
+                    <span className="expand-icon">
+                      {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    </span>
                   )}
-                  <span className="log-time">{formatTime(log.created_at)}</span>
                 </div>
+
+                {isExpanded && hasDetails && (
+                  <div className="log-details-expanded">
+                    {typeof log.details === 'string' ? log.details : JSON.stringify(log.details, null, 2)}
+                  </div>
+                )}
               </div>
             )
           })}
