@@ -1,0 +1,319 @@
+/* 
+ * SharedCompact.css - Common styles for all compact page components
+ * Based on the CronJobs design pattern
+ */
+
+/* ============================
+ * BASE LAYOUT
+ * ============================ */
+.compact-page {
+  padding: 12px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ============================
+ * HEADER SECTION (Standardized)
+ * ============================ */
+.compact-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.compact-header h2 {
+  margin: 0;
+  flex: 1;
+  font-size: 1.1rem;
+}
+
+.compact-header svg:first-child {
+  color: var(--primary);
+}
+
+.compact-count-badge {
+  background: var(--primary);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.compact-refresh-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.compact-refresh-btn:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+/* ============================
+ * SCROLLABLE LIST
+ * ============================ */
+.compact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.compact-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.compact-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.compact-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* ============================
+ * ROW PATTERN (Collapsed/Expandable)
+ * ============================ */
+.compact-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.compact-row:hover {
+  border-color: var(--primary);
+}
+
+.compact-row.expanded {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.compact-row.disabled {
+  opacity: 0.5;
+}
+
+/* Row Summary (Collapsed View) */
+.compact-row-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.compact-row-summary:hover {
+  background: var(--background);
+}
+
+/* Row Details (Expanded View) */
+.compact-row-details {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--background);
+}
+
+/* ============================
+ * COMMON ELEMENTS
+ * ============================ */
+
+/* Icon Container */
+.compact-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Main Label/Name */
+.compact-label {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Badge */
+.compact-badge {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--background);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Expand Icon */
+.compact-expand-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ============================
+ * DETAIL GRID (Expanded Content)
+ * ============================ */
+.compact-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compact-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.compact-detail-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.compact-detail-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.compact-detail-value svg {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ============================
+ * FOOTER NOTE
+ * ============================ */
+.compact-footer-note {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 16px;
+  opacity: 0.7;
+}
+
+/* ============================
+ * LOADING & EMPTY STATES
+ * ============================ */
+.compact-loading,
+.compact-empty {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.compact-error {
+  text-align: center;
+  padding: 24px 16px;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* ============================
+ * ANIMATIONS
+ * ============================ */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.compact-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ============================
+ * TABS/FILTERS
+ * ============================ */
+.compact-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.compact-tab {
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.compact-tab:hover {
+  background: var(--border);
+}
+
+.compact-tab.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* ============================
+ * MOBILE RESPONSIVENESS
+ * ============================ */
+@media (max-width: 600px) {
+  .compact-page {
+    padding: 8px;
+  }
+  
+  .compact-row-summary {
+    padding: 8px 10px;
+  }
+  
+  .compact-label {
+    font-size: 0.85rem;
+  }
+  
+  .compact-badge {
+    font-size: 0.7rem;
+    padding: 1px 6px;
+  }
+}
+
+/* ============================
+ * STATUS COLORS
+ * ============================ */
+.compact-status-ok,
+.compact-status-success {
+  color: #22c55e;
+}
+
+.compact-status-error,
+.compact-status-failed {
+  color: #ef4444;
+}
+
+.compact-status-warning {
+  color: #f59e0b;
+}
+
+.compact-status-info {
+  color: #3b82f6;
+}

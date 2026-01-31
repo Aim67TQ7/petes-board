@@ -1,5 +1,7 @@
+@import './SharedCompact.css';
+
 .chat-archive {
-  padding: 16px;
+  padding: 12px;
   max-width: 1000px;
   margin: 0 auto;
 }

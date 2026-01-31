@@ -1,5 +1,7 @@
+@import './SharedCompact.css';
+
 .roi-dashboard {
-  padding: 16px;
+  padding: 12px;
   max-width: 1200px;
   margin: 0 auto;
 }

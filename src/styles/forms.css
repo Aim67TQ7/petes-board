@@ -31,14 +31,22 @@
 .form-textarea,
 .form-select {
   width: 100%;
-  padding: 0.75rem 1rem;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   font-family: inherit;
   transition: all var(--transition-base);
+  box-shadow: var(--shadow-xs);
+}
+
+.form-input:hover,
+.form-textarea:hover,
+.form-select:hover {
+  border-color: var(--border-light);
+  background: var(--bg);
 }
 
 .form-input:focus,
@@ -46,7 +54,9 @@
 .form-select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+  background: var(--bg);
+  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.15), var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .form-input:disabled,

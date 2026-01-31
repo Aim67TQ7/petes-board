@@ -1,5 +1,7 @@
+@import './SharedCompact.css';
+
 .parking-lot {
-  padding: 16px;
+  padding: 12px;
   max-width: 1400px;
   margin: 0 auto;
 }
