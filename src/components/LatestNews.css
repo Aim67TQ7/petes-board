@@ -212,6 +212,15 @@
   opacity: 0.7;
 }
 
+/* Footer Note */
+.footer-note {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 16px;
+  opacity: 0.7;
+}
+
 /* Mobile */
 @media (max-width: 600px) {
   .latest-news.compact {

@@ -8,7 +8,7 @@
    SIDEBAR - Fixed Navigation
    ============================================ */
 .sidebar {
-  width: 240px;
+  width: 260px;
   background: var(--surface);
   border-right: 1px solid var(--border);
   display: flex;
@@ -19,18 +19,19 @@
   left: 0;
   height: 100vh;
   z-index: 100;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem;
-  margin-bottom: 1.5rem;
-  font-size: 1.15rem;
-  font-weight: 600;
+  padding: 0.75rem;
+  margin-bottom: 2rem;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--text);
+  letter-spacing: -0.02em;
 }
 
 .logo .refresh-icon {
@@ -75,77 +76,62 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
   overflow-y: auto;
   padding-right: 0.25rem;
+  margin-top: 0.5rem;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
   background: none;
   border: none;
   border-radius: var(--radius);
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.925rem;
   text-align: left;
   transition: all var(--transition-fast);
   position: relative;
+  font-weight: 500;
 }
 
 .nav-item:hover {
   background: var(--surface-hover);
   color: var(--text);
-  transform: translateX(2px);
+  transform: translateX(3px);
 }
 
 .nav-item.active {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
-  font-weight: 500;
-  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3);
 }
 
 .nav-item.active:hover {
-  background: var(--accent-hover);
+  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
   transform: translateX(0);
 }
 
 .nav-item svg {
   flex-shrink: 0;
+  width: 20px;
+  height: 20px;
 }
 
 /* Sidebar Footer */
 .sidebar-footer {
-  padding-top: 1rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--border);
   margin-top: auto;
 }
 
-.btn-primary {
+/* Sidebar footer button inherits from shared .btn-primary but needs full width */
+.sidebar-footer .btn-primary {
   width: 100%;
-  padding: 0.75rem 1rem;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--accent-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.btn-primary:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: var(--shadow-sm);
 }
 
 /* ============================================
@@ -156,7 +142,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-left: 240px;
+  margin-left: 260px;
   height: 100vh;
   background: var(--bg);
 }
@@ -164,6 +150,16 @@
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 240px;
+  }
+  
+  .main-content {
+    margin-left: 240px;
+  }
+}
+
 @media (max-width: 1024px) {
   .sidebar {
     width: 220px;

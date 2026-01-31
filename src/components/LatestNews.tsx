@@ -144,6 +144,10 @@ export default function LatestNews() {
           )
         })}
       </div>
+
+      <p className="footer-note">
+        Daily briefings generated at 4:00 AM CDT · Real-time updates enabled
+      </p>
     </div>
   )
 }

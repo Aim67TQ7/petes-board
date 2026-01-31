@@ -206,6 +206,10 @@ export default function ActivityLog() {
           })}
         </div>
       )}
+
+      <p className="footer-note">
+        Real-time activity tracking · Auto-refresh enabled
+      </p>
     </div>
   )
 }

@@ -160,9 +160,10 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
           onUploadComplete()
         }
       }, 1500)
-    } catch (err) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Upload failed'
       setFiles(prev => prev.map(f => 
-        f.status === 'uploading' ? { ...f, status: 'error' as const, error: 'Upload failed' } : f
+        f.status === 'uploading' ? { ...f, status: 'error' as const, error: errorMessage } : f
       ))
     } finally {
       setIsUploading(false)

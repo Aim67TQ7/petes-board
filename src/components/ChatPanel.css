@@ -12,25 +12,28 @@
    CHAT HEADER
    ============================================ */
 .chat-header {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid var(--border);
+  padding: 2rem 2.5rem;
+  border-bottom: 2px solid var(--border);
   position: sticky;
   top: 0;
   background: var(--bg);
   z-index: 10;
+  backdrop-filter: blur(8px);
 }
 
 .chat-header h1 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
   color: var(--text);
+  letter-spacing: -0.03em;
 }
 
 .chat-header p {
   color: var(--text-muted);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
 /* ============================================
@@ -127,20 +130,26 @@
 .message-content {
   background: var(--surface);
   border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--border);
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
+  padding: 1.125rem 1.375rem;
+  border: 1.5px solid var(--border);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .message-content:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
 }
 
 .message.user .message-content {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   border-color: var(--accent);
   color: white;
+  box-shadow: 0 2px 12px rgba(88, 166, 255, 0.3);
+}
+
+.message.user .message-content:hover {
+  box-shadow: 0 4px 20px rgba(88, 166, 255, 0.4);
 }
 
 .message-header {
@@ -162,6 +171,53 @@
 .message-time {
   font-size: 0.75rem;
   opacity: 0.6;
+}
+
+.tts-speak-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.tts-speak-btn:hover {
+  color: var(--accent);
+  background: var(--surface-hover);
+}
+
+.message.user .tts-speak-btn {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.message.user .tts-speak-btn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Highlight currently playing message */
+.message.tts-playing {
+  animation: tts-pulse 1.5s ease-in-out infinite;
+}
+
+.message.tts-playing .message-content {
+  border-color: var(--success);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+@keyframes tts-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
 }
 
 .message-text {
@@ -394,50 +450,53 @@
 
 .chat-input {
   flex: 1;
-  padding: 0.875rem 1rem;
+  padding: 1rem 1.125rem;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: 0.975rem;
   line-height: 1.5;
   resize: none;
-  transition: all var(--transition-fast);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   max-height: 150px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .chat-input::placeholder {
   color: var(--text-muted);
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .chat-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .send-btn {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
   border: none;
-  padding: 0.875rem 1rem;
-  border-radius: var(--radius);
+  padding: 1rem 1.125rem;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
 }
 
 .send-btn:hover:not(:disabled) {
-  background: var(--accent-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(88, 166, 255, 0.4);
 }
 
 .send-btn:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3);
 }
 
 .send-btn:disabled {

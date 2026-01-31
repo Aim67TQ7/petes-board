@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Message } from '../types'
-import { Send, Paperclip, Radio, User, FileText, Image, X, FileSpreadsheet, Loader } from 'lucide-react'
+import { Send, Paperclip, Radio, User, FileText, Image, X, FileSpreadsheet, Loader, Volume2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { useTTS } from '../hooks/useTTS'
+import TTSControls from './TTSControls'
 import './ChatPanel.css'
 
 // Accepted file types
@@ -29,6 +31,27 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
   const [isSending, setIsSending] = useState(false)
   const messagesTopRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Initialize TTS with auto-play enabled by default
+  const tts = useTTS({ autoPlay: true })
+
+  // Auto-add new Pete messages to TTS queue
+  useEffect(() => {
+    const latestPeteMessage = recentMessages.find(m => m.sender === 'pete')
+    if (latestPeteMessage && tts.isAutoPlay) {
+      // Only speak if not already in queue or playing
+      const alreadyQueued = tts.queue.some(q => q.id === latestPeteMessage.id)
+      const isCurrentlyPlaying = tts.currentMessageId === latestPeteMessage.id
+      
+      if (!alreadyQueued && !isCurrentlyPlaying) {
+        tts.speak({
+          id: latestPeteMessage.id,
+          text: latestPeteMessage.content,
+          sender: latestPeteMessage.sender
+        })
+      }
+    }
+  }, [recentMessages, tts.isAutoPlay])
 
   // No auto-scroll needed - newest messages are at top where user lands
 
@@ -87,12 +110,32 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
     return <FileText size={16} />
   }
 
+  // Manually add message to TTS queue
+  const handleSpeakMessage = (messageId: string, text: string, sender: string) => {
+    tts.speak({ id: messageId, text, sender })
+  }
+
   return (
     <div className="chat-panel">
       <header className="chat-header">
         <h1>Chat with Pete</h1>
         <p>Ask questions, give instructions, or upload files for analysis</p>
       </header>
+
+      {tts.isSupported && (
+        <TTSControls
+          isPlaying={tts.isPlaying}
+          isPaused={tts.isPaused}
+          isAutoPlay={tts.isAutoPlay}
+          queueLength={tts.queue.length}
+          isSupported={tts.isSupported}
+          onPlay={tts.play}
+          onPause={tts.pause}
+          onStop={tts.stop}
+          onSkip={tts.skip}
+          onToggleAutoPlay={tts.toggleAutoPlay}
+        />
+      )}
 
       <div className="messages-container">
         {recentMessages.length === 0 ? (
@@ -102,34 +145,46 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
             <p>Messages older than 24 hours are in the Archive</p>
           </div>
         ) : (
-          recentMessages.map(message => (
-            <div key={message.id} className={`message ${message.sender}`}>
-              <div className="message-avatar">
-                {message.sender === 'pete' ? <Radio size={20} /> : <User size={20} />}
-              </div>
-              <div className="message-content">
-                <div className="message-header">
-                  <span className="sender-name">
-                    {message.sender === 'pete' ? 'Pete' : 'You'}
-                  </span>
-                  <span className="message-time">{formatTime(message.created_at)}</span>
+          recentMessages.map(message => {
+            const isCurrentlyPlaying = tts.currentMessageId === message.id
+            return (
+              <div key={message.id} className={`message ${message.sender} ${isCurrentlyPlaying ? 'tts-playing' : ''}`}>
+                <div className="message-avatar">
+                  {message.sender === 'pete' ? <Radio size={20} /> : <User size={20} />}
                 </div>
-                <div className="message-text">
-                  <ReactMarkdown>{message.content}</ReactMarkdown>
-                </div>
-                {message.attachments && message.attachments.length > 0 && (
-                  <div className="message-attachments">
-                    {message.attachments.map((att, i) => (
-                      <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="attachment">
-                        {getFileIcon(att.type, att.name)}
-                        <span>{att.name}</span>
-                      </a>
-                    ))}
+                <div className="message-content">
+                  <div className="message-header">
+                    <span className="sender-name">
+                      {message.sender === 'pete' ? 'Pete' : 'You'}
+                    </span>
+                    <span className="message-time">{formatTime(message.created_at)}</span>
+                    {tts.isSupported && message.sender === 'pete' && (
+                      <button
+                        className="tts-speak-btn"
+                        onClick={() => handleSpeakMessage(message.id, message.content, message.sender)}
+                        title="Add to TTS queue"
+                      >
+                        <Volume2 size={14} />
+                      </button>
+                    )}
                   </div>
-                )}
+                  <div className="message-text">
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                  </div>
+                  {message.attachments && message.attachments.length > 0 && (
+                    <div className="message-attachments">
+                      {message.attachments.map((att, i) => (
+                        <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="attachment">
+                          {getFileIcon(att.type, att.name)}
+                          <span>{att.name}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            )
+          })
         )}
         <div ref={messagesTopRef} />
       </div>
