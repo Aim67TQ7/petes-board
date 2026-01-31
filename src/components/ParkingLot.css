@@ -21,11 +21,11 @@
 }
 
 .parking-header svg:first-child {
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .parking-count {
-  background: var(--primary);
+  background: var(--accent);
   color: white;
   font-size: 0.75rem;
   padding: 2px 8px;
@@ -80,7 +80,7 @@
 }
 
 .task-count {
-  background: var(--primary);
+  background: var(--accent);
   color: white;
   font-size: 0.75rem;
   padding: 2px 8px;
@@ -137,7 +137,7 @@
 
 .rambling-input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .rambling-input::placeholder {
@@ -168,13 +168,13 @@
 }
 
 .extract-btn {
-  background: var(--primary);
+  background: var(--accent);
   color: white;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--accent);
 }
 
 .extract-btn:hover:not(:disabled) {
-  background: var(--primary-dark);
+  background: var(--accent-hover);
 }
 
 .extract-btn:disabled {
@@ -231,13 +231,13 @@
 }
 
 .mini-drop-zone:hover {
-  border-color: var(--primary);
-  background: rgba(59, 130, 246, 0.05);
+  border-color: var(--accent);
+  background: rgba(88, 166, 255, 0.05);
 }
 
 .mini-drop-zone.dragging {
-  border-color: var(--primary);
-  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--accent);
+  background: rgba(88, 166, 255, 0.1);
 }
 
 .mini-drop-zone svg {
@@ -281,7 +281,7 @@
 }
 
 .file-mini-item svg {
-  color: var(--primary);
+  color: var(--accent);
   flex-shrink: 0;
 }
 
@@ -333,9 +333,9 @@
 .upload-files-btn {
   margin-top: 8px;
   padding: 8px 16px;
-  background: var(--primary);
+  background: var(--accent);
   color: white;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--accent);
   border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 500;
@@ -348,7 +348,7 @@
 }
 
 .upload-files-btn:hover:not(:disabled) {
-  background: var(--primary-dark);
+  background: var(--accent-hover);
 }
 
 .upload-files-btn:disabled {
@@ -378,7 +378,7 @@
 .task-card {
   background: var(--background);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--primary);
+  border-left: 3px solid var(--accent);
   border-radius: 6px;
   padding: 12px;
   transition: all 0.2s;
@@ -431,8 +431,8 @@
 }
 
 .priority-badge.normal {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  background: rgba(88, 166, 255, 0.1);
+  color: var(--accent);
 }
 
 .priority-badge.low {
@@ -470,9 +470,9 @@
 .push-btn {
   width: 100%;
   padding: 8px;
-  background: var(--primary);
+  background: var(--accent);
   color: white;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--accent);
   border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 500;
@@ -485,7 +485,7 @@
 }
 
 .push-btn:hover {
-  background: var(--primary-dark);
+  background: var(--accent-hover);
 }
 
 .pushed-badge {

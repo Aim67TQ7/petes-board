@@ -21,11 +21,11 @@
 }
 
 .roi-header svg:first-child {
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .roi-count {
-  background: var(--primary);
+  background: var(--accent);
   color: white;
   font-size: 0.75rem;
   padding: 2px 8px;
@@ -72,9 +72,9 @@
 }
 
 .timeframe-tabs-compact button.active {
-  background: var(--primary);
+  background: var(--accent);
   color: white;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 /* Metrics Grid */
@@ -97,18 +97,18 @@
 }
 
 .metric-card:hover {
-  border-color: var(--primary);
+  border-color: var(--accent);
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .metric-card.highlight {
-  border-color: var(--primary);
+  border-color: var(--accent);
   background: linear-gradient(135deg, var(--surface) 0%, rgba(59, 130, 246, 0.05) 100%);
 }
 
 .metric-icon {
   flex-shrink: 0;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .metric-content {
@@ -311,7 +311,7 @@
 }
 
 .assumptions-note svg {
-  color: var(--primary);
+  color: var(--accent);
   flex-shrink: 0;
   margin-top: 2px;
 }

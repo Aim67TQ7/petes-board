@@ -3,24 +3,24 @@
   min-height: 100vh;
   background: var(--bg);
   position: relative;
+  isolation: isolate;
 }
 
 /* ============================================
    SIDEBAR - Fixed Navigation
    ============================================ */
 .sidebar {
-  width: 260px;
-  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-secondary) 100%);
-  border-right: 2px solid var(--border);
+  width: 240px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: var(--space-xl) var(--space-md);
+  padding: var(--space-lg) 0;
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   z-index: 100;
-  box-shadow: var(--shadow-lg), 2px 0 0 0 rgba(88, 166, 255, 0.05);
   overflow: hidden;
   transition: width var(--transition-slow), padding var(--transition-slow);
   will-change: width;
@@ -30,22 +30,23 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md);
-  margin-bottom: var(--space-xl);
-  font-size: 1.35rem;
-  font-weight: 800;
+  padding: var(--space-lg) var(--space-xl);
+  margin: 0 var(--space-md) var(--space-xl) var(--space-md);
+  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   background: var(--surface-elevated);
-  border-radius: var(--radius-lg);
-  border: 2px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
   transition: all var(--transition-base);
+  user-select: none;
 }
 
 .logo:hover {
-  border-color: var(--accent);
-  box-shadow: var(--shadow-md), var(--glow-accent);
+  border-color: var(--border-light);
+  background: var(--surface-hover);
+  box-shadow: var(--shadow-sm);
 }
 
 .logo .refresh-icon {
@@ -90,12 +91,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-md);
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: var(--space-xs);
-  padding-bottom: var(--space-lg);
-  margin-top: var(--space-md);
+  padding: 0 var(--space-md);
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
@@ -103,25 +102,21 @@
 .nav-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-  padding-bottom: var(--space-xs);
+  gap: 4px;
+  padding-bottom: var(--space-lg);
 }
 
 .nav-section-label {
   font-size: 0.6875rem;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-subtle);
-  padding: var(--space-sm) var(--space-lg);
+  padding: var(--space-sm) var(--space-md) var(--space-xs) var(--space-md);
   margin-bottom: var(--space-xs);
   opacity: 0.7;
   transition: opacity var(--transition-base);
-}
-
-.nav-section:hover .nav-section-label {
-  opacity: 1;
-  color: var(--text-muted);
+  user-select: none;
 }
 
 .nav-item {
@@ -130,12 +125,12 @@
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border: none;
+  border-radius: var(--radius);
   color: var(--text-muted);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   text-align: left;
-  transition: all var(--transition-base);
+  transition: all var(--transition-fast);
   position: relative;
   font-weight: 500;
   cursor: pointer;
@@ -152,35 +147,32 @@
   background: var(--accent);
   transform: scaleY(0);
   transition: transform var(--transition-base);
+  border-radius: 0 2px 2px 0;
 }
 
 .nav-item:hover {
   background: var(--surface-hover);
-  border-color: var(--border-light);
   color: var(--text);
-  transform: translateX(4px);
 }
 
 .nav-item:hover::before {
-  transform: scaleY(0.6);
+  transform: scaleY(0.5);
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-active) 100%);
-  border-color: var(--accent-hover);
+  background: var(--accent);
   color: white;
   font-weight: 600;
-  box-shadow: var(--shadow-md), var(--glow-accent);
 }
 
 .nav-item.active::before {
   transform: scaleY(1);
   background: white;
+  opacity: 0.8;
 }
 
 .nav-item.active:hover {
-  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
-  transform: translateX(2px);
+  background: var(--accent-hover);
 }
 
 .nav-item svg {
@@ -191,19 +183,16 @@
 
 /* Sidebar Footer */
 .sidebar-footer {
-  padding-top: var(--space-lg);
-  border-top: 2px solid var(--border);
+  padding: var(--space-lg) var(--space-lg) var(--space-lg);
+  border-top: 1px solid var(--border);
   margin-top: auto;
-  position: sticky;
-  bottom: 0;
-  background: linear-gradient(180deg, transparent 0%, var(--surface) 30%);
-  padding-bottom: var(--space-sm);
+  background: var(--surface);
 }
 
 /* Sidebar footer button inherits from shared .btn-primary but needs full width */
 .sidebar-footer .btn-primary {
   width: 100%;
-  font-weight: 700;
+  font-weight: 600;
   justify-content: center;
   gap: var(--space-sm);
 }
@@ -216,23 +205,12 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-left: 260px;
+  margin-left: 240px;
   height: 100vh;
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-secondary) 100%);
+  background: var(--bg);
   position: relative;
   transition: margin-left var(--transition-slow);
   will-change: margin-left;
-}
-
-.main-content::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: radial-gradient(circle at 50% 0%, rgba(88, 166, 255, 0.08) 0%, transparent 70%);
-  pointer-events: none;
 }
 
 /* ============================================
@@ -240,21 +218,21 @@
    ============================================ */
 @media (max-width: 1200px) {
   .sidebar {
-    width: 240px;
-  }
-  
-  .main-content {
-    margin-left: 240px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .sidebar {
     width: 220px;
   }
   
   .main-content {
     margin-left: 220px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+  
+  .main-content {
+    margin-left: 200px;
   }
 }
 

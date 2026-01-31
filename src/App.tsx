@@ -282,7 +282,7 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className="app" role="application">
       <nav className="sidebar" role="navigation" aria-label="Main navigation">
         <div className="logo">
           <button 
@@ -428,7 +428,7 @@ function App() {
         </div>
       </nav>
 
-      <main className="main-content">
+      <main className="main-content" role="main" aria-live="polite">
         {activeView === 'board' && (
           <KanbanBoard 
             tasks={tasks} 

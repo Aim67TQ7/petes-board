@@ -24,16 +24,28 @@
 }
 
 .modal {
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
-  border: 3px solid var(--border-light);
+  background: var(--surface);
+  border: 2px solid var(--border-light);
   border-radius: var(--radius-xl);
   width: 100%;
-  max-width: 600px;
+  max-width: 650px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: var(--shadow-xl), 0 0 0 1px rgba(88, 166, 255, 0.1);
+  box-shadow: var(--shadow-xl), 0 0 40px rgba(88, 166, 255, 0.1);
   animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   scrollbar-width: thin;
+  position: relative;
+}
+
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
 @keyframes slideUp {
@@ -54,9 +66,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-xl) var(--space-2xl);
-  border-bottom: 2px solid var(--border);
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
+  padding: var(--space-2xl);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -66,29 +78,31 @@
 
 .modal-header h3 {
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text);
   margin: 0;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .modal-close {
-  background: var(--surface-hover);
-  border: 2px solid var(--border);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
   color: var(--text-muted);
-  padding: var(--space-sm);
+  padding: var(--space-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   transition: all var(--transition-base);
+  min-width: 40px;
+  min-height: 40px;
 }
 
 .modal-close:hover {
   background: var(--danger);
   border-color: var(--danger);
   color: white;
-  transform: rotate(90deg) scale(1.1);
+  transform: rotate(90deg) scale(1.05);
   box-shadow: var(--shadow-md), var(--glow-danger);
 }
 
@@ -98,7 +112,7 @@
 /* Most form styles now inherited from shared styles/forms.css */
 
 .modal form {
-  padding: 1.5rem;
+  padding: var(--space-2xl);
 }
 
 /* Modal-specific form styling overrides */

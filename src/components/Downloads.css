@@ -1,16 +1,13 @@
 @import './SharedCompact.css';
 
-.downloads-page {
+/* Container */
+.downloads-page.compact {
   padding: 12px;
   max-width: 800px;
   margin: 0 auto;
 }
 
-.downloads-page.compact {
-  padding: 12px;
-}
-
-/* Standardized header */
+/* Header - matches CronJobs pattern */
 .downloads-header {
   display: flex;
   align-items: center;
@@ -24,12 +21,12 @@
   font-size: 1.1rem;
 }
 
-.downloads-header svg {
-  color: var(--primary);
+.downloads-header svg:first-child {
+  color: var(--accent);
 }
 
 .file-count {
-  background: var(--primary);
+  background: var(--accent);
   color: white;
   font-size: 0.75rem;
   padding: 2px 8px;
@@ -52,7 +49,8 @@
   color: var(--text);
 }
 
-.loading, .no-files, .error-msg {
+/* States */
+.loading, .no-files {
   text-align: center;
   padding: 24px 16px;
   color: var(--text-muted);
@@ -60,12 +58,15 @@
 }
 
 .error-msg {
+  text-align: center;
+  padding: 24px 16px;
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
   border-radius: 8px;
+  font-size: 0.9rem;
 }
 
-/* Downloads List - Compact Pattern */
+/* List - matches CronJobs pattern */
 .downloads-list.compact {
   display: flex;
   flex-direction: column;
@@ -88,7 +89,7 @@
   border-radius: 2px;
 }
 
-/* Download Row */
+/* Row - matches CronJobs pattern */
 .download-row {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -98,11 +99,11 @@
 }
 
 .download-row:hover {
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .download-row.expanded {
-  border-color: var(--primary);
+  border-color: var(--accent);
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
@@ -121,7 +122,7 @@
 
 .download-icon {
   flex-shrink: 0;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .download-name {
@@ -147,7 +148,7 @@
   flex-shrink: 0;
 }
 
-/* Download Details - Expanded View */
+/* Details - matches CronJobs pattern */
 .download-details {
   padding: 12px 16px;
   border-top: 1px solid var(--border);
@@ -208,9 +209,9 @@
 }
 
 .download-btn {
-  background: var(--primary);
+  background: var(--accent);
   color: white;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .download-btn:hover {

@@ -18,6 +18,7 @@
   box-shadow: var(--shadow-sm);
   gap: var(--space-lg);
   min-height: 88px;
+  user-select: none;
 }
 
 .page-header h1 {
@@ -66,6 +67,7 @@
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .panel::before {

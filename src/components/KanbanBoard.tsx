@@ -90,14 +90,17 @@ export default function KanbanBoard({ tasks, onStatusChange, onTaskClick, onArch
     return filtered
   }
 
+  const totalTasks = activeTasks.length
+
   return (
     <div className="kanban-board">
-      <header className="board-header">
-        <h1>Task Board</h1>
+      <header className="board-header compact-header">
+        <Inbox size={20} />
+        <h2>Task Board</h2>
+        <span className="compact-count-badge">{totalTasks}</span>
         {onCreateTask && (
-          <button className="create-task-btn" onClick={onCreateTask}>
-            <Plus size={18} />
-            <span>New Task</span>
+          <button className="create-task-btn compact-refresh-btn" onClick={onCreateTask}>
+            <Plus size={16} />
           </button>
         )}
       </header>

@@ -6,6 +6,8 @@
   flex-direction: column;
   height: 100%;
   background: var(--bg);
+  position: relative;
+  isolation: isolate;
 }
 
 /* ============================================
@@ -21,11 +23,12 @@
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-xl) var(--space-2xl);
+  padding: var(--space-xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
   scrollbar-width: thin;
+  scroll-behavior: smooth;
 }
 
 /* Empty Chat State */
@@ -98,28 +101,25 @@
 
 .message-content {
   background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: 1.125rem 1.375rem;
-  border: 1.5px solid var(--border);
-  transition: box-shadow var(--transition-base), transform var(--transition-base);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  will-change: transform;
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-xl);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition-base);
 }
 
 .message-content:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
+  border-color: var(--border-light);
 }
 
 .message.user .message-content {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  background: var(--accent);
   border-color: var(--accent);
   color: white;
-  box-shadow: 0 2px 12px rgba(88, 166, 255, 0.3);
 }
 
 .message.user .message-content:hover {
-  box-shadow: 0 4px 20px rgba(88, 166, 255, 0.4);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .message-header {
@@ -354,10 +354,10 @@
    CHAT INPUT FORM
    ============================================ */
 .chat-input-form {
-  padding: 1.25rem 2rem;
-  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-lg) var(--space-xl);
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--border);
-  background: var(--bg);
+  background: var(--surface);
   position: sticky;
   bottom: 0;
   z-index: 10;
@@ -420,18 +420,16 @@
 
 .chat-input {
   flex: 1;
-  padding: 1rem 1.125rem;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   color: var(--text);
-  font-size: 0.975rem;
+  font-size: 0.9375rem;
   line-height: 1.5;
   resize: none;
-  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+  transition: border-color var(--transition-base);
   max-height: 150px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  will-change: box-shadow, transform;
 }
 
 .chat-input::placeholder {
@@ -442,32 +440,27 @@
 .chat-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  background: var(--surface-hover);
 }
 
 .send-btn {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  background: var(--accent);
   color: white;
   border: none;
-  padding: 1rem 1.125rem;
-  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-base);
-  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+  transition: background var(--transition-base);
 }
 
 .send-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(88, 166, 255, 0.4);
+  background: var(--accent-hover);
 }
 
 .send-btn:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3);
+  background: var(--accent-active);
 }
 
 .send-btn:disabled {
