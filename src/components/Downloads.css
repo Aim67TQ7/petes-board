@@ -1,4 +1,10 @@
 .downloads-page {
+  padding: 12px;
+  max-width: 800px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 1.5rem;
   max-width: 800px;
   height: 100%;

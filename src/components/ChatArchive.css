@@ -1,4 +1,7 @@
 .chat-archive {
+  padding: 12px;
+  height: 100%;
+  overflow-y: auto;
   padding: 1.5rem;
   height: 100%;
   overflow-y: auto;
