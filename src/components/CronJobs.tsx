@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Clock, RefreshCw, CheckCircle, XCircle, Pause, Play, Calendar, Timer } from 'lucide-react'
+import { Clock, RefreshCw, CheckCircle, XCircle, Pause, Play, Calendar, Timer, ChevronDown, ChevronUp, Edit2, Save, X, History } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 import './CronJobs.css'
 
 interface CronJob {
@@ -31,8 +32,11 @@ export default function CronJobs() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [now, setNow] = useState(Date.now())
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editSchedule, setEditSchedule] = useState<string>('')
+  const [saving, setSaving] = useState(false)
 
-  // Update "now" every minute for relative time display
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 60000)
     return () => clearInterval(interval)
@@ -62,9 +66,23 @@ export default function CronJobs() {
 
   const formatInterval = (ms: number) => {
     if (ms < 60000) return `${ms / 1000}s`
-    if (ms < 3600000) return `${Math.round(ms / 60000)} min`
-    if (ms < 86400000) return `${Math.round(ms / 3600000)} hr`
-    return `${Math.round(ms / 86400000)} day`
+    if (ms < 3600000) return `${Math.round(ms / 60000)}m`
+    if (ms < 86400000) return `${Math.round(ms / 3600000)}h`
+    return `${Math.round(ms / 86400000)}d`
+  }
+
+  const formatScheduleShort = (job: CronJob) => {
+    if (job.schedule.kind === 'every' && job.schedule.everyMs) {
+      return `⏱ ${formatInterval(job.schedule.everyMs)}`
+    }
+    if (job.schedule.expr) {
+      // Parse common cron expressions
+      const expr = job.schedule.expr
+      if (expr.match(/^\d+ \* \* \* \*$/)) return `⏱ hourly`
+      if (expr.match(/^0 \d+ \* \* \*$/)) return `📅 daily`
+      return `📅 cron`
+    }
+    return job.schedule.kind
   }
 
   const formatTime = (ms?: number) => {
@@ -78,123 +96,203 @@ export default function CronJobs() {
     })
   }
 
-  const formatRelative = (ms?: number) => {
+  const formatRelativeShort = (ms?: number) => {
     if (!ms) return ''
     const diff = ms - now
     const absDiff = Math.abs(diff)
     
-    if (absDiff < 60000) return diff > 0 ? 'in <1 min' : '<1 min ago'
+    if (absDiff < 60000) return diff > 0 ? '<1m' : 'now'
     if (absDiff < 3600000) {
       const mins = Math.round(absDiff / 60000)
-      return diff > 0 ? `in ${mins} min` : `${mins} min ago`
+      return diff > 0 ? `${mins}m` : `${mins}m ago`
     }
     if (absDiff < 86400000) {
       const hrs = Math.round(absDiff / 3600000)
-      return diff > 0 ? `in ${hrs} hr` : `${hrs} hr ago`
+      return diff > 0 ? `${hrs}h` : `${hrs}h ago`
     }
     const days = Math.round(absDiff / 86400000)
-    return diff > 0 ? `in ${days} day${days > 1 ? 's' : ''}` : `${days} day${days > 1 ? 's' : ''} ago`
+    return diff > 0 ? `${days}d` : `${days}d ago`
   }
 
   const getStatusIcon = (status?: string) => {
-    if (status === 'ok') return <CheckCircle size={16} className="status-ok" />
-    if (status === 'error') return <XCircle size={16} className="status-error" />
+    if (status === 'ok') return <CheckCircle size={14} className="status-ok" />
+    if (status === 'error') return <XCircle size={14} className="status-error" />
     return null
   }
 
   const formatCron = (expr?: string) => {
     if (!expr) return ''
     // Common cron translations
-    if (expr === '0 9 * * *') return 'Daily at 9:00 AM UTC'
-    if (expr === '0 10 * * *') return 'Daily at 10:00 AM UTC'
+    const parts = expr.split(' ')
+    if (parts.length === 5) {
+      const [min, hour, dom, mon, dow] = parts
+      if (dom === '*' && mon === '*' && dow === '*') {
+        if (hour === '*') return `Every hour at :${min.padStart(2, '0')}`
+        return `Daily at ${hour}:${min.padStart(2, '0')} UTC`
+      }
+    }
     return expr
+  }
+
+  const toggleExpand = (id: string) => {
+    setExpandedId(expandedId === id ? null : id)
+    setEditingId(null)
+  }
+
+  const startEdit = (job: CronJob) => {
+    setEditingId(job.id)
+    if (job.schedule.kind === 'every' && job.schedule.everyMs) {
+      setEditSchedule(`every ${formatInterval(job.schedule.everyMs)}`)
+    } else if (job.schedule.expr) {
+      setEditSchedule(job.schedule.expr)
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditSchedule('')
+  }
+
+  const saveSchedule = async (job: CronJob) => {
+    setSaving(true)
+    // Note: This would need backend support to actually update the cron job
+    // For now, we'll show a message that manual update is needed
+    alert(`Schedule change requested: "${editSchedule}"\n\nTo update, ask Pete to modify the cron job "${job.name}" in Clawdbot.`)
+    setSaving(false)
+    setEditingId(null)
   }
 
   if (loading) {
     return (
       <div className="cron-jobs">
         <div className="cron-header">
-          <Clock size={24} />
+          <Clock size={20} />
           <h2>Cron Jobs</h2>
         </div>
-        <div className="loading">Loading scheduled jobs...</div>
+        <div className="loading">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="cron-jobs">
+    <div className="cron-jobs compact">
       <div className="cron-header">
-        <Clock size={24} />
+        <Clock size={20} />
         <h2>Cron Jobs</h2>
+        <span className="job-count">{jobs.length}</span>
         <button className="refresh-btn" onClick={loadJobs} title="Refresh">
-          <RefreshCw size={18} />
+          <RefreshCw size={16} />
         </button>
       </div>
 
       {error && <div className="error-msg">{error}</div>}
 
       {jobs.length === 0 ? (
-        <div className="no-jobs">
-          <p>No cron jobs configured.</p>
-        </div>
+        <div className="no-jobs">No cron jobs configured.</div>
       ) : (
-        <div className="jobs-list">
-          {jobs.map(job => (
-            <div key={job.id} className={`job-card ${job.enabled ? '' : 'disabled'}`}>
-              <div className="job-header">
-                <div className="job-status">
-                  {job.enabled ? <Play size={16} className="enabled" /> : <Pause size={16} className="paused" />}
-                </div>
-                <h3>{job.name}</h3>
-                {job.state?.lastStatus && getStatusIcon(job.state.lastStatus)}
-              </div>
-              
-              {job.description && <p className="job-desc">{job.description}</p>}
-              
-              <div className="job-schedule">
-                <Calendar size={14} />
-                <span>
-                  {job.schedule.kind === 'every' && job.schedule.everyMs 
-                    ? `Every ${formatInterval(job.schedule.everyMs)}`
-                    : formatCron(job.schedule.expr) || job.schedule.kind}
-                </span>
-              </div>
-
-              <div className="job-times">
-                <div className="time-block next">
-                  <div className="time-label">
-                    <Timer size={14} />
-                    Next Run
+        <div className="jobs-list compact">
+          {jobs.map(job => {
+            const isExpanded = expandedId === job.id
+            const isEditing = editingId === job.id
+            
+            return (
+              <div key={job.id} className={`job-row ${job.enabled ? '' : 'disabled'} ${isExpanded ? 'expanded' : ''}`}>
+                {/* Collapsed row - always visible */}
+                <div className="job-summary" onClick={() => toggleExpand(job.id)}>
+                  <div className="job-status-icon">
+                    {job.enabled ? <Play size={12} className="enabled" /> : <Pause size={12} className="paused" />}
                   </div>
-                  <div className="time-value">{formatTime(job.state?.nextRunAtMs)}</div>
-                  <div className="time-relative">{formatRelative(job.state?.nextRunAtMs)}</div>
+                  <span className="job-name">{job.name}</span>
+                  <span className="job-schedule-badge">{formatScheduleShort(job)}</span>
+                  <span className="job-next">
+                    {job.state?.lastStatus && getStatusIcon(job.state.lastStatus)}
+                    <span className="next-time">{formatRelativeShort(job.state?.nextRunAtMs)}</span>
+                  </span>
+                  <span className="expand-icon">
+                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </span>
                 </div>
-                <div className="time-block last">
-                  <div className="time-label">
-                    <CheckCircle size={14} />
-                    Last Run
-                  </div>
-                  <div className="time-value">{formatTime(job.state?.lastRunAtMs)}</div>
-                  <div className="time-relative">{formatRelative(job.state?.lastRunAtMs)}</div>
-                </div>
-              </div>
 
-              {job.state?.lastDurationMs !== undefined && (
-                <div className="job-duration">
-                  Completed in {job.state.lastDurationMs}ms
-                </div>
-              )}
-            </div>
-          ))}
+                {/* Expanded details */}
+                {isExpanded && (
+                  <div className="job-details">
+                    {job.description && <p className="job-desc">{job.description}</p>}
+                    
+                    <div className="detail-grid">
+                      <div className="detail-item">
+                        <span className="detail-label">Schedule</span>
+                        {isEditing ? (
+                          <div className="edit-schedule">
+                            <input 
+                              type="text" 
+                              value={editSchedule} 
+                              onChange={(e) => setEditSchedule(e.target.value)}
+                              placeholder="e.g., every 10m or 0 9 * * *"
+                            />
+                            <button onClick={() => saveSchedule(job)} disabled={saving} className="save-btn">
+                              <Save size={14} />
+                            </button>
+                            <button onClick={cancelEdit} className="cancel-btn">
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="detail-value with-edit">
+                            <Calendar size={14} />
+                            <span>
+                              {job.schedule.kind === 'every' && job.schedule.everyMs 
+                                ? `Every ${formatInterval(job.schedule.everyMs)}`
+                                : formatCron(job.schedule.expr) || job.schedule.kind}
+                            </span>
+                            <button className="edit-btn" onClick={(e) => { e.stopPropagation(); startEdit(job); }}>
+                              <Edit2 size={12} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="detail-item">
+                        <span className="detail-label">Next Run</span>
+                        <div className="detail-value">
+                          <Timer size={14} />
+                          <span>{formatTime(job.state?.nextRunAtMs)}</span>
+                          <span className="relative-badge next">{formatRelativeShort(job.state?.nextRunAtMs)}</span>
+                        </div>
+                      </div>
+
+                      <div className="detail-item">
+                        <span className="detail-label">Last Run</span>
+                        <div className="detail-value">
+                          {job.state?.lastStatus && getStatusIcon(job.state.lastStatus)}
+                          <span>{formatTime(job.state?.lastRunAtMs)}</span>
+                          {job.state?.lastDurationMs !== undefined && (
+                            <span className="duration-badge">{job.state.lastDurationMs}ms</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="job-actions">
+                      <a 
+                        href={`#/cron-history/${job.id}`} 
+                        className="history-link"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <History size={14} />
+                        View History
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       )}
 
       <p className="footer-note">
-        {updatedAt && (
-          <>Last synced: {new Date(updatedAt).toLocaleString()} · </>
-        )}
-        Schedules managed by Pete (Clawdbot)
+        {updatedAt && <>Synced: {new Date(updatedAt).toLocaleTimeString()} · </>}
+        Managed by Pete
       </p>
     </div>
   )
