@@ -13,7 +13,7 @@ interface TaskAttachment {
 
 interface Props {
   task: Task | null
-  onSave: (task: Partial<Task>) => void
+  onSave: (task: Partial<Task>) => Promise<{ success: boolean; error?: string }>
   onDelete?: () => void
   onClose: () => void
   onAddUpdate?: (taskId: string, updateText: string) => void
@@ -29,6 +29,8 @@ export default function TaskModal({ task, onSave, onDelete, onClose, onAddUpdate
   const [replyText, setReplyText] = useState('')
   const [attachments, setAttachments] = useState<TaskAttachment[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -46,6 +48,9 @@ export default function TaskModal({ task, onSave, onDelete, onClose, onAddUpdate
       setStatus('inbox')
       setAttachments([])
     }
+    // Reset error state when task changes
+    setSaveError(null)
+    setIsSaving(false)
   }, [task])
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,21 +119,42 @@ export default function TaskModal({ task, onSave, onDelete, onClose, onAddUpdate
     return <FileText size={16} />
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title.trim()) return
-
-    const taskData: Partial<Task> & { attachments?: TaskAttachment[] } = {
-      title,
-      notes,
-      priority,
-      attachments: attachments.length > 0 ? attachments : undefined
+    if (!title.trim()) {
+      setSaveError('Task title is required')
+      return
     }
 
-    if (task) {
-      onSave({ ...task, ...taskData, status })
-    } else {
-      onSave(taskData)
+    if (isSaving) return // Prevent double submission
+
+    setIsSaving(true)
+    setSaveError(null)
+
+    try {
+      const taskData: Partial<Task> & { attachments?: TaskAttachment[] } = {
+        title: title.trim(),
+        notes: notes.trim(),
+        priority,
+        attachments: attachments.length > 0 ? attachments : undefined
+      }
+
+      let result
+      if (task) {
+        result = await onSave({ ...task, ...taskData, status })
+      } else {
+        result = await onSave(taskData)
+      }
+
+      if (!result.success) {
+        setSaveError(result.error || 'Failed to save task')
+        setIsSaving(false)
+      }
+      // If successful, modal will be closed by parent component
+    } catch (err) {
+      console.error('Error submitting task:', err)
+      setSaveError('An unexpected error occurred while saving')
+      setIsSaving(false)
     }
   }
 
@@ -314,18 +340,53 @@ export default function TaskModal({ task, onSave, onDelete, onClose, onAddUpdate
             </div>
           )}
 
+          {saveError && (
+            <div className="error-message" style={{
+              padding: '12px',
+              marginTop: '16px',
+              backgroundColor: '#fee',
+              border: '1px solid #fcc',
+              borderRadius: '4px',
+              color: '#c33',
+              fontSize: '14px'
+            }}>
+              ⚠️ {saveError}
+            </div>
+          )}
+
           <div className="modal-footer">
             {task && onDelete && (
-              <button type="button" className="btn-danger" onClick={onDelete}>
+              <button 
+                type="button" 
+                className="btn-danger" 
+                onClick={onDelete}
+                disabled={isSaving}
+              >
                 Delete
               </button>
             )}
             <div className="footer-right">
-              <button type="button" className="btn-secondary" onClick={onClose}>
+              <button 
+                type="button" 
+                className="btn-secondary" 
+                onClick={onClose}
+                disabled={isSaving}
+              >
                 Cancel
               </button>
-              <button type="submit" className="btn-primary">
-                {task ? 'Save Changes' : 'Create Task'}
+              <button 
+                type="submit" 
+                className="btn-primary"
+                disabled={isSaving || !title.trim()}
+              >
+                {isSaving ? (
+                  <>
+                    <RefreshCw size={14} className="spin" style={{ marginRight: '6px' }} />
+                    {task ? 'Saving...' : 'Creating...'}
+                  </>
+                ) : (
+                  task ? 'Save Changes' : 'Create Task'
+                )}
               </button>
             </div>
           </div>

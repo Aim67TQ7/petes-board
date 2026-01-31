@@ -78,33 +78,68 @@ function App() {
     }
   }
 
-  const handleCreateTask = async (task: Partial<Task>) => {
-    const { error } = await supabase.from('tasks').insert([{
-      title: task.title,
-      notes: task.notes || '',
-      status: 'inbox',
-      priority: task.priority || 'normal',
-      updates: [],
-      attachments: (task as any).attachments || null
-    }])
-    if (!error) setShowTaskModal(false)
+  const handleCreateTask = async (task: Partial<Task>): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const { data, error } = await supabase.from('tasks').insert([{
+        title: task.title,
+        notes: task.notes || '',
+        status: 'inbox',
+        priority: task.priority || 'normal',
+        updates: [],
+        attachments: (task as any).attachments || null
+      }]).select()
+      
+      if (error) {
+        console.error('Create task error:', error)
+        return { success: false, error: error.message }
+      }
+      
+      if (!data || data.length === 0) {
+        return { success: false, error: 'Failed to create task - no data returned' }
+      }
+      
+      setShowTaskModal(false)
+      return { success: true }
+    } catch (err) {
+      console.error('Unexpected error creating task:', err)
+      return { success: false, error: 'An unexpected error occurred' }
+    }
   }
 
-  const handleUpdateTask = async (task: Partial<Task>) => {
-    if (!editingTask) return
-    const { error } = await supabase
-      .from('tasks')
-      .update({
-        title: task.title,
-        notes: task.notes,
-        status: task.status,
-        priority: task.priority,
-        attachments: (task as any).attachments || null
-      })
-      .eq('id', editingTask.id)
-    if (!error) {
+  const handleUpdateTask = async (task: Partial<Task>): Promise<{ success: boolean; error?: string }> => {
+    if (!editingTask) {
+      return { success: false, error: 'No task selected for editing' }
+    }
+    
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .update({
+          title: task.title,
+          notes: task.notes,
+          status: task.status,
+          priority: task.priority,
+          attachments: (task as any).attachments || null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', editingTask.id)
+        .select()
+      
+      if (error) {
+        console.error('Update task error:', error)
+        return { success: false, error: error.message }
+      }
+      
+      if (!data || data.length === 0) {
+        return { success: false, error: 'Failed to update task - no data returned' }
+      }
+      
       setShowTaskModal(false)
       setEditingTask(null)
+      return { success: true }
+    } catch (err) {
+      console.error('Unexpected error updating task:', err)
+      return { success: false, error: 'An unexpected error occurred' }
     }
   }
 

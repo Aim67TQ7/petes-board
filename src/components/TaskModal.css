@@ -143,10 +143,19 @@
   font-weight: 600;
   font-size: 0.9rem;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
@@ -160,8 +169,13 @@
   transition: background 0.2s;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: var(--surface-hover);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-danger {
@@ -176,10 +190,15 @@
   transition: all 0.2s;
 }
 
-.btn-danger:hover {
+.btn-danger:hover:not(:disabled) {
   background: var(--danger);
   color: white;
   opacity: 1;
+}
+
+.btn-danger:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 /* Reply Section */
@@ -363,4 +382,20 @@
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* Error Message */
+.error-message {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
