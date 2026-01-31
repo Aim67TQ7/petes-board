@@ -125,11 +125,12 @@ export default function Downloads() {
 
   if (loading) {
     return (
-      <div className="downloads-page">
-        <header className="downloads-header">
+      <div className="downloads-page compact">
+        <div className="downloads-header">
           <Download size={20} />
-          <h1>Downloads</h1>
-        </header>
+          <h2>Downloads</h2>
+          <span className="file-count">Loading...</span>
+        </div>
         <div className="downloads-loading">
           <Loader2 className="spin" size={32} />
           <span>Loading files...</span>
@@ -140,11 +141,12 @@ export default function Downloads() {
 
   if (error) {
     return (
-      <div className="downloads-page">
-        <header className="downloads-header">
+      <div className="downloads-page compact">
+        <div className="downloads-header">
           <Download size={20} />
-          <h1>Downloads</h1>
-        </header>
+          <h2>Downloads</h2>
+          <span className="file-count">Error</span>
+        </div>
         <div className="downloads-error">
           <p>Error loading files: {error}</p>
           <button onClick={fetchFiles}>Retry</button>
@@ -159,14 +161,14 @@ export default function Downloads() {
 
   return (
     <div className="downloads-page compact">
-      <header className="downloads-header">
+      <div className="downloads-header">
         <Download size={20} />
-        <h1>Downloads</h1>
+        <h2>Downloads</h2>
         <span className="file-count">{files.length}</span>
         <button className="refresh-btn" onClick={fetchFiles} title="Refresh">
           <RefreshCw size={16} />
         </button>
-      </header>
+      </div>
 
       {files.length === 0 ? (
         <div className="downloads-empty">
@@ -233,6 +235,10 @@ export default function Downloads() {
           })}
         </div>
       )}
+
+      <p className="footer-note">
+        Files uploaded to Pete's Board storage · Click to expand details
+      </p>
     </div>
   )
 }

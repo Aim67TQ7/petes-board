@@ -339,11 +339,14 @@ export default function ParkingLot({ onUpload, onUploadComplete }: Props) {
   const unpushedTasks = extractedTasks.filter(t => !t.pushed)
 
   return (
-    <div className="parking-lot">
-      <header className="parking-header">
-        <h1>🅿️ Parking Lot</h1>
-        <p>Dump your thoughts, ideas, and files here. Extract actionable tasks when ready.</p>
-      </header>
+    <div className="parking-lot compact">
+      <div className="parking-header">
+        <Inbox size={20} />
+        <h2>Parking Lot</h2>
+        <span className="parking-count">{unpushedTasks.length} pending</span>
+      </div>
+
+      <p className="parking-subtitle">Dump your thoughts, ideas, and files here. Extract actionable tasks when ready.</p>
 
       <div className="parking-split">
         {/* Left: Dictation/Text Input */}
@@ -505,6 +508,10 @@ export default function ParkingLot({ onUpload, onUploadComplete }: Props) {
           )}
         </div>
       </div>
+
+      <p className="footer-note">
+        Voice dictation, text input, and file uploads · Extract tasks on demand
+      </p>
     </div>
   )
 }
