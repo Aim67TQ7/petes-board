@@ -15,6 +15,7 @@ import VoiceBriefings from './components/VoiceBriefings'
 import TokenUsage from './components/TokenUsage'
 import ROIDashboard from './components/ROIDashboard'
 import { Kanban, MessageSquare, ParkingSquare, Radio, FolderDown, Archive, Newspaper, Clock, Activity, Mic, BarChart3, TrendingUp } from 'lucide-react'
+import { requestNotificationPermission, notifyUser, isSubagentCompletion } from './utils/notifications'
 import './App.css'
 
 type View = 'board' | 'chat' | 'parking' | 'downloads' | 'archive' | 'news' | 'cron' | 'activity' | 'voice' | 'tokens' | 'roi'
@@ -32,6 +33,9 @@ function App() {
 
   useEffect(() => {
     if (!isUnlocked) return
+
+    // Request notification permission
+    requestNotificationPermission()
 
     loadTasks()
     loadMessages()
@@ -88,7 +92,16 @@ function App() {
 
   const handleMessageChange = (payload: any) => {
     if (payload.eventType === 'INSERT') {
-      setMessages(prev => [...prev, payload.new])
+      const newMessage = payload.new
+      setMessages(prev => [...prev, newMessage])
+      
+      // Notify if it's from Pete and looks like a completion/important update
+      if (newMessage.sender === 'pete' && isSubagentCompletion(newMessage.content)) {
+        notifyUser(
+          '📡 Pete Update',
+          newMessage.content.substring(0, 100) + (newMessage.content.length > 100 ? '...' : '')
+        )
+      }
     }
   }
 
