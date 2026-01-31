@@ -118,6 +118,83 @@
   margin-bottom: 0;
 }
 
+/* Markdown rendering styles */
+.card-content strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.card-content em {
+  font-style: italic;
+}
+
+.card-content code {
+  background: var(--bg);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.card-content pre {
+  background: var(--bg);
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.card-content pre code {
+  background: none;
+  padding: 0;
+  color: var(--text);
+}
+
+.card-content ul,
+.card-content ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.card-content li {
+  margin: 0.25rem 0;
+  line-height: 1.6;
+}
+
+.card-content a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.card-content a:hover {
+  text-decoration: underline;
+}
+
+.card-content blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  margin: 0.75rem 0;
+  color: var(--text-muted);
+}
+
+.card-content h1,
+.card-content h2,
+.card-content h3,
+.card-content h4,
+.card-content h5,
+.card-content h6 {
+  margin: 0.75rem 0 0.5rem;
+  font-weight: 600;
+}
+
+.card-content h1 { font-size: 1.3em; }
+.card-content h2 { font-size: 1.2em; }
+.card-content h3 { font-size: 1.1em; }
+.card-content h4 { font-size: 1em; }
+.card-content h5 { font-size: 0.9em; }
+.card-content h6 { font-size: 0.85em; }
+
 /* Sports card color */
 .news-card.sports { border-left-color: #8b5cf6; }
 .news-card.sports .card-header svg { color: #8b5cf6; }
