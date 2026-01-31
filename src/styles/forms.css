@@ -32,7 +32,7 @@
 .form-select {
   width: 100%;
   padding: var(--space-md) var(--space-lg);
-  background: var(--bg-secondary);
+  background: linear-gradient(135deg, var(--surface-elevated) 0%, var(--surface) 100%);
   border: 2px solid var(--border);
   border-radius: var(--radius-md);
   color: var(--text);
@@ -46,7 +46,8 @@
 .form-textarea:hover,
 .form-select:hover {
   border-color: var(--border-light);
-  background: var(--bg);
+  background: linear-gradient(135deg, var(--surface-hover) 0%, var(--surface-elevated) 100%);
+  box-shadow: var(--shadow-sm);
 }
 
 .form-input:focus,
@@ -54,8 +55,8 @@
 .form-select:focus {
   outline: none;
   border-color: var(--accent);
-  background: var(--bg);
-  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.15), var(--shadow-sm);
+  background: var(--surface-hover);
+  box-shadow: var(--shadow-md), 0 0 0 3px rgba(88, 166, 255, 0.15);
   transform: translateY(-1px);
 }
 

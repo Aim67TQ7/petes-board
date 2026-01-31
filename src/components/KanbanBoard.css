@@ -13,25 +13,29 @@
 
 /* Board Header - Use standardized compact header */
 .board-header {
-  padding: var(--space-lg) var(--space-xl);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
+  padding: var(--space-xl) var(--space-2xl);
+  border-bottom: 2px solid var(--border);
+  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
 }
 
 .board-header h2 {
   margin: 0;
   flex: 1;
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  color: var(--text);
 }
 
 .board-header svg:first-child {
   color: var(--accent);
+  width: 24px;
+  height: 24px;
 }
 
 /* ============================================
@@ -51,9 +55,9 @@
 }
 
 .column {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -62,7 +66,7 @@
   max-height: calc(100vh - 180px);
   transition: all var(--transition-base);
   position: relative;
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
 }
 
 .column::before {
@@ -72,15 +76,15 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--accent);
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
   opacity: 0;
   transition: opacity var(--transition-base);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .column:hover {
   border-color: var(--border-light);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), 0 0 0 3px rgba(88, 166, 255, 0.1);
   transform: translateY(-2px);
 }
 
@@ -166,7 +170,7 @@
 }
 
 .task-card {
-  background: var(--surface-elevated);
+  background: linear-gradient(135deg, var(--surface-elevated) 0%, var(--surface) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: var(--space-lg);
@@ -185,13 +189,14 @@
   opacity: 0;
   transition: opacity var(--transition-base);
   pointer-events: none;
+  border-radius: var(--radius-md);
 }
 
 .task-card:hover {
   border-color: var(--accent);
   background: var(--surface-hover);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: var(--shadow-md), 0 0 0 2px rgba(88, 166, 255, 0.15);
 }
 
 .task-card:hover::after {
@@ -200,7 +205,7 @@
 
 .task-card:active {
   cursor: grabbing;
-  transform: translateY(-1px);
+  transform: translateY(-1px) scale(1);
   box-shadow: var(--shadow-sm);
 }
 

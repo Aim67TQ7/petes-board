@@ -239,8 +239,8 @@
 
 /* Card styles */
 .card {
-  background: var(--surface);
-  border: 2px solid var(--border);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-shadow: var(--shadow-sm);
@@ -248,13 +248,13 @@
 }
 
 .card:hover {
-  border-color: var(--border-light);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lg), var(--glow-accent);
+  transform: translateY(-4px);
 }
 
 .card-elevated {
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
+  background: linear-gradient(135deg, var(--surface-elevated) 0%, var(--surface-hover) 100%);
   box-shadow: var(--shadow-md);
 }
 

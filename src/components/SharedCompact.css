@@ -24,38 +24,47 @@
   gap: var(--space-md);
   margin-bottom: var(--space-xl);
   padding-bottom: var(--space-lg);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
 }
 
 .compact-header h2 {
   margin: 0;
   flex: 1;
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  color: var(--text);
 }
 
 .compact-header svg:first-child {
   color: var(--accent);
   width: 24px;
   height: 24px;
+  flex-shrink: 0;
 }
 
 .compact-count-badge {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
   font-size: 0.75rem;
   padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   font-weight: 600;
-  min-width: 28px;
+  min-width: 32px;
   text-align: center;
+  box-shadow: var(--shadow-sm), 0 0 0 3px rgba(88, 166, 255, 0.15);
+  transition: all var(--transition-base);
+}
+
+.compact-count-badge:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md), 0 0 0 3px rgba(88, 166, 255, 0.2);
 }
 
 .compact-refresh-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--surface-elevated) 0%, var(--surface) 100%);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
   padding: var(--space-sm);
   cursor: pointer;
   color: var(--text-muted);
@@ -63,15 +72,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 40px;
+  min-height: 40px;
+  box-shadow: var(--shadow-sm);
 }
 
 .compact-refresh-btn:hover {
-  background: var(--surface-hover);
+  background: linear-gradient(135deg, var(--surface-hover) 0%, var(--surface-elevated) 100%);
   color: var(--accent);
   border-color: var(--accent);
-  transform: scale(1.05);
+  transform: scale(1.05) rotate(90deg);
+  box-shadow: var(--shadow-md), 0 0 0 3px rgba(88, 166, 255, 0.15);
+}
+
+.compact-refresh-btn:active {
+  transform: scale(0.95) rotate(180deg);
 }
 
 /* ============================
@@ -110,8 +125,8 @@
  * ROW PATTERN (Collapsed/Expandable)
  * ============================ */
 .compact-row {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--surface-elevated) 0%, var(--surface) 100%);
+  border: 2px solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: all var(--transition-base);
@@ -119,15 +134,15 @@
 }
 
 .compact-row:hover {
-  border-color: var(--accent);
+  border-color: var(--border-light);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md), 0 0 0 3px rgba(88, 166, 255, 0.1);
 }
 
 .compact-row.expanded {
   border-color: var(--accent);
-  box-shadow: var(--shadow-md);
-  background: var(--surface-elevated);
+  box-shadow: var(--shadow-lg), 0 0 0 3px rgba(88, 166, 255, 0.15);
+  background: var(--surface-hover);
 }
 
 .compact-row.disabled {
@@ -296,26 +311,34 @@
 
 .compact-tab {
   padding: 6px 12px;
-  background: var(--surface);
+  background: var(--surface-elevated);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-size: 0.8rem;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
   display: flex;
   align-items: center;
   gap: 6px;
+  box-shadow: var(--shadow-sm);
+  font-weight: 500;
 }
 
 .compact-tab:hover {
-  background: var(--border);
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .compact-tab.active {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
   border-color: var(--accent);
+  box-shadow: var(--shadow-md), var(--glow-accent);
+  font-weight: 600;
 }
 
 /* ============================
