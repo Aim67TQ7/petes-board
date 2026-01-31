@@ -39,20 +39,24 @@ export default function TokenUsage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<AgentFilter>('all')
   const [timeView, setTimeView] = useState<TimeView>('day')
-  const [autoRefresh, setAutoRefresh] = useState(true)
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
 
   useEffect(() => {
     fetchUsage()
     
-    // Auto-refresh every 30 seconds when enabled
-    if (autoRefresh) {
-      const interval = setInterval(() => {
-        fetchUsage()
-      }, 30000)
-      return () => clearInterval(interval)
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('token-usage-changes')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'token_usage' }, (payload) => {
+        setRecords(prev => [payload.new as UsageRecord, ...prev].slice(0, 500))
+        setLastRefresh(new Date())
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
     }
-  }, [autoRefresh])
+  }, [])
 
   const fetchUsage = async () => {
     setLoading(true)
@@ -180,51 +184,35 @@ export default function TokenUsage() {
   }
 
   return (
-    <div className="token-usage">
-      <header className="usage-header">
-        <div className="header-title">
-          <Coins size={24} />
-          <h1>Token Usage</h1>
-        </div>
-        <div className="header-actions">
-          <div className="filter-tabs">
-            <button 
-              className={filter === 'all' ? 'active' : ''} 
-              onClick={() => setFilter('all')}
-            >
-              All
-            </button>
-            <button 
-              className={filter === 'pete' ? 'active' : ''} 
-              onClick={() => setFilter('pete')}
-            >
-              <User size={14} /> Pete
-            </button>
-            <button 
-              className={filter === 'drew' ? 'active' : ''} 
-              onClick={() => setFilter('drew')}
-            >
-              <Bot size={14} /> Drew
-            </button>
-          </div>
-          <div className="refresh-controls">
-            <button 
-              className={`auto-refresh-btn ${autoRefresh ? 'active' : ''}`}
-              onClick={() => setAutoRefresh(!autoRefresh)}
-              title={autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
-            >
-              <RefreshCw size={14} className={loading ? 'spin' : ''} />
-              {autoRefresh ? 'Auto' : 'Manual'}
-            </button>
-            <button className="refresh-btn" onClick={fetchUsage} disabled={loading}>
-              <RefreshCw size={16} className={loading ? 'spin' : ''} />
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="token-usage compact">
+      <div className="usage-header">
+        <Coins size={20} />
+        <h2>Token Usage</h2>
+        <span className="usage-count">{records.length} records</span>
+        <button className="refresh-btn" onClick={fetchUsage} title="Manual refresh">
+          <RefreshCw size={16} className={loading ? 'spin' : ''} />
+        </button>
+      </div>
 
-      <div className="last-refresh">
-        Last updated: {lastRefresh.toLocaleTimeString()}
+      <div className="filter-tabs-compact">
+        <button 
+          className={filter === 'all' ? 'active' : ''} 
+          onClick={() => setFilter('all')}
+        >
+          All
+        </button>
+        <button 
+          className={filter === 'pete' ? 'active' : ''} 
+          onClick={() => setFilter('pete')}
+        >
+          <User size={14} /> Pete
+        </button>
+        <button 
+          className={filter === 'drew' ? 'active' : ''} 
+          onClick={() => setFilter('drew')}
+        >
+          <Bot size={14} /> Drew
+        </button>
       </div>
 
       <div className="usage-totals">
@@ -378,6 +366,10 @@ export default function TokenUsage() {
           </table>
         </div>
       </div>
+
+      <p className="footer-note">
+        ✅ Real-time updates active • Last refresh: {lastRefresh.toLocaleTimeString()}
+      </p>
     </div>
   )
 }

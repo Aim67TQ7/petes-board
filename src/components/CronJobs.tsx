@@ -61,6 +61,13 @@ export default function CronJobs() {
 
   useEffect(() => {
     loadJobs()
+    
+    // Poll every 60 seconds for updates
+    const interval = setInterval(() => {
+      loadJobs()
+    }, 60000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   const formatInterval = (ms: number) => {

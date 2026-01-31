@@ -35,6 +35,21 @@ export default function LatestNews() {
 
   useEffect(() => {
     loadNews()
+    
+    // Subscribe to real-time updates for news briefs
+    const channel = supabase
+      .channel('news-briefs-changes')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'news_briefs' }, () => {
+        loadNews() // Reload to get the latest news brief
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'news_briefs' }, () => {
+        loadNews()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   // Format date in CDT (America/Chicago)

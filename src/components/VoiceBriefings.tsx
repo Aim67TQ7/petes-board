@@ -35,6 +35,21 @@ export default function VoiceBriefings() {
 
   useEffect(() => {
     loadBriefings()
+    
+    // Subscribe to real-time updates for voice briefings
+    const channel = supabase
+      .channel('voice-briefings-changes')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'voice_briefings' }, (payload) => {
+        setBriefings(prev => [payload.new as Briefing, ...prev].slice(0, 30))
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'voice_briefings' }, (payload) => {
+        setBriefings(prev => prev.map(b => b.id === payload.new.id ? payload.new as Briefing : b))
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   const togglePlay = (briefing: Briefing) => {

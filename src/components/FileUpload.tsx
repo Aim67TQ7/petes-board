@@ -88,16 +88,7 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
         if (item.type.startsWith('image/')) {
           const pastedFile = item.getAsFile()
           if (pastedFile) {
-            // Create a properly named file for pasted images
-            const timestamp = Date.now()
-            const ext = pastedFile.type.split('/')[1] || 'png'
-            try {
-              const namedFile = new File([pastedFile], `screenshot-${timestamp}.${ext}`, { type: pastedFile.type })
-              imageFiles.push(namedFile)
-            } catch {
-              // Fallback for environments that don't support File constructor
-              imageFiles.push(pastedFile)
-            }
+            imageFiles.push(pastedFile)
           }
         }
       }

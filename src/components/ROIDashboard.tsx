@@ -118,9 +118,25 @@ export default function ROIDashboard() {
   useEffect(() => {
     fetchData()
     
-    // Auto-refresh every 5 minutes
-    const interval = setInterval(fetchData, 5 * 60 * 1000)
-    return () => clearInterval(interval)
+    // Subscribe to real-time updates for tasks and token usage
+    const tasksChannel = supabase
+      .channel('roi-tasks-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => {
+        fetchData()
+      })
+      .subscribe()
+
+    const tokensChannel = supabase
+      .channel('roi-tokens-changes')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'token_usage' }, () => {
+        fetchData()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(tasksChannel)
+      supabase.removeChannel(tokensChannel)
+    }
   }, [])
 
   const currentTaskStats = taskStats[activeTimeFrame]
@@ -188,29 +204,27 @@ export default function ROIDashboard() {
   }
 
   return (
-    <div className="roi-dashboard">
-      <header className="roi-header">
-        <div className="header-title">
-          <TrendingUp size={24} />
-          <h1>ROI Dashboard</h1>
-        </div>
-        <div className="header-actions">
-          <div className="timeframe-tabs">
-            {TIME_FRAMES.map(tf => (
-              <button
-                key={tf.key}
-                className={activeTimeFrame === tf.key ? 'active' : ''}
-                onClick={() => setActiveTimeFrame(tf.key)}
-              >
-                {tf.label}
-              </button>
-            ))}
-          </div>
-          <button className="refresh-btn" onClick={fetchData}>
-            <RefreshCw size={16} />
+    <div className="roi-dashboard compact">
+      <div className="roi-header">
+        <TrendingUp size={20} />
+        <h2>ROI Dashboard</h2>
+        <span className="roi-count">{roiMetrics.tasksCompleted} tasks</span>
+        <button className="refresh-btn" onClick={fetchData} title="Refresh">
+          <RefreshCw size={16} />
+        </button>
+      </div>
+
+      <div className="timeframe-tabs-compact">
+        {TIME_FRAMES.map(tf => (
+          <button
+            key={tf.key}
+            className={activeTimeFrame === tf.key ? 'active' : ''}
+            onClick={() => setActiveTimeFrame(tf.key)}
+          >
+            {tf.label}
           </button>
-        </div>
-      </header>
+        ))}
+      </div>
 
       {/* Key Metrics */}
       <div className="metrics-grid">
@@ -354,6 +368,10 @@ export default function ROIDashboard() {
           Token costs based on Claude Sonnet average pricing
         </p>
       </div>
+
+      <p className="footer-note">
+        Calculations based on completed tasks · Auto-refresh every 5 minutes
+      </p>
     </div>
   )
 }

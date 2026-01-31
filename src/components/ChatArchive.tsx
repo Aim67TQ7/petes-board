@@ -144,11 +144,14 @@ export default function ChatArchive() {
   }
 
   return (
-    <div className="chat-archive">
-      <header className="archive-header">
-        <h1><Archive size={24} /> Archives</h1>
-        <p>Conversation history and completed tasks organized by date</p>
-      </header>
+    <div className="chat-archive compact">
+      <div className="archive-header">
+        <Archive size={20} />
+        <h2>Archives</h2>
+        <span className="archive-count">{items.length}</span>
+      </div>
+
+      <p className="archive-subtitle">Conversation history and completed tasks organized by date</p>
 
       <div className="archive-list">
         {items.length === 0 ? (
@@ -245,6 +248,10 @@ export default function ChatArchive() {
           })
         )}
       </div>
+
+      <p className="footer-note">
+        All messages and archived tasks · Organized by date
+      </p>
     </div>
   )
 }
