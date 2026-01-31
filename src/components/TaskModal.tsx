@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Task } from '../types'
-import { X } from 'lucide-react'
+import { X, MessageSquare, RefreshCw } from 'lucide-react'
 import './TaskModal.css'
 
 interface Props {
@@ -8,13 +8,15 @@ interface Props {
   onSave: (task: Partial<Task>) => void
   onDelete?: () => void
   onClose: () => void
+  onAddUpdate?: (taskId: string, updateText: string) => void
 }
 
-export default function TaskModal({ task, onSave, onDelete, onClose }: Props) {
+export default function TaskModal({ task, onSave, onDelete, onClose, onAddUpdate }: Props) {
   const [title, setTitle] = useState('')
   const [notes, setNotes] = useState('')
   const [priority, setPriority] = useState<Task['priority']>('normal')
   const [status, setStatus] = useState<Task['status']>('inbox')
+  const [replyText, setReplyText] = useState('')
 
   useEffect(() => {
     if (task) {
@@ -108,17 +110,67 @@ export default function TaskModal({ task, onSave, onDelete, onClose }: Props) {
             )}
           </div>
 
-          {task && task.updates && task.updates.length > 0 && (
+          {task && (
             <div className="task-updates">
-              <h4>Updates from Pete</h4>
-              {task.updates.map((update, i) => (
-                <div key={i} className="update-item">
-                  <p>{update.text}</p>
-                  <span className="update-time">
-                    {new Date(update.time).toLocaleString()}
-                  </span>
+              <h4>
+                <MessageSquare size={16} />
+                Updates & Replies
+              </h4>
+              {task.updates && task.updates.length > 0 ? (
+                task.updates.map((update, i) => (
+                  <div key={i} className="update-item">
+                    <p>{update.text}</p>
+                    <span className="update-time">
+                      {new Date(update.time).toLocaleString()}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="no-updates">No updates yet</p>
+              )}
+              
+              {onAddUpdate && (
+                <div className="reply-section">
+                  <div className="reply-input-row">
+                    <input
+                      type="text"
+                      placeholder="Add a reply or note..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && replyText.trim()) {
+                          onAddUpdate(task.id, replyText.trim())
+                          setReplyText('')
+                        }
+                      }}
+                    />
+                    <button 
+                      type="button" 
+                      className="btn-reply"
+                      onClick={() => {
+                        if (replyText.trim()) {
+                          onAddUpdate(task.id, replyText.trim())
+                          setReplyText('')
+                        }
+                      }}
+                      disabled={!replyText.trim()}
+                    >
+                      Reply
+                    </button>
+                  </div>
+                  <button 
+                    type="button" 
+                    className="btn-bump"
+                    onClick={() => {
+                      const timestamp = new Date().toLocaleString()
+                      onAddUpdate(task.id, `Bumped at ${timestamp}`)
+                    }}
+                  >
+                    <RefreshCw size={14} />
+                    Bump to Top
+                  </button>
                 </div>
-              ))}
+              )}
             </div>
           )}
 

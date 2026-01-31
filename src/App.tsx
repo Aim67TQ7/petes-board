@@ -137,6 +137,38 @@ function App() {
     await supabase.from('tasks').update({ status: 'trashed' }).eq('id', taskId)
   }
 
+  const handleAddUpdate = async (taskId: string, updateText: string) => {
+    // Get current task to append update
+    const { data: currentTask } = await supabase
+      .from('tasks')
+      .select('updates')
+      .eq('id', taskId)
+      .single()
+    
+    const currentUpdates = currentTask?.updates || []
+    const newUpdate = {
+      text: updateText,
+      time: new Date().toISOString()
+    }
+    
+    await supabase
+      .from('tasks')
+      .update({ 
+        updates: [...currentUpdates, newUpdate],
+        status: 'inbox' // Bump back to inbox
+      })
+      .eq('id', taskId)
+    
+    // Refresh the editing task
+    if (editingTask && editingTask.id === taskId) {
+      setEditingTask({
+        ...editingTask,
+        updates: [...currentUpdates, newUpdate],
+        status: 'inbox'
+      })
+    }
+  }
+
   const handleSendMessage = async (content: string, attachments?: File[]): Promise<void> => {
     const uploadedAttachments = []
     
@@ -338,6 +370,7 @@ function App() {
           onSave={editingTask ? handleUpdateTask : handleCreateTask}
           onDelete={editingTask ? () => handleDeleteTask(editingTask.id) : undefined}
           onClose={() => { setShowTaskModal(false); setEditingTask(null) }}
+          onAddUpdate={editingTask ? handleAddUpdate : undefined}
         />
       )}
     </div>
