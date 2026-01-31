@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Clock, RefreshCw, CheckCircle, XCircle, Pause, Play, Calendar, Timer, ChevronDown, ChevronUp, Edit2, Save, X, History } from 'lucide-react'
-import { supabase } from '../lib/supabase'
 import './CronJobs.css'
 
 interface CronJob {
