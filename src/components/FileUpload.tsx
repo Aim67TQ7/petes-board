@@ -16,14 +16,18 @@ const ACCEPTED_TYPES = {
   'application/msword': 'Word',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word',
   'text/plain': 'Text',
-}
+} as const
 
 const ACCEPT_STRING = Object.keys(ACCEPTED_TYPES).join(',') + ',.csv,.xlsx,.xls,.doc,.docx'
 const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
 
-interface FileWithStatus extends File {
-  status?: 'pending' | 'uploading' | 'success' | 'error'
+type FileStatus = 'pending' | 'uploading' | 'success' | 'error'
+
+interface FileWithStatus {
+  file: File
+  status: FileStatus
   error?: string
+  id: string
 }
 
 interface Props {
@@ -37,7 +41,7 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
 
-  const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
+  const validateFile = (file: File): { valid: boolean; error?: string } => {
     // Check file size
     if (file.size > MAX_FILE_SIZE) {
       return { valid: false, error: 'File too large (max 50MB)' }
@@ -57,22 +61,20 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
     }
 
     return { valid: false, error: 'Unsupported file type' }
-  }, [])
+  }
 
   const addFiles = useCallback((newFiles: File[]) => {
-    const validatedFiles = newFiles.map(file => {
+    const validatedFiles: FileWithStatus[] = newFiles.map(file => {
       const validation = validateFile(file)
-      const fileWithStatus = file as FileWithStatus
-      if (!validation.valid) {
-        fileWithStatus.status = 'error'
-        fileWithStatus.error = validation.error
-      } else {
-        fileWithStatus.status = 'pending'
+      return {
+        file,
+        id: `${file.name}-${file.size}-${Date.now()}-${Math.random()}`,
+        status: validation.valid ? 'pending' : 'error',
+        error: validation.error
       }
-      return fileWithStatus
     })
     setFiles(prev => [...prev, ...validatedFiles])
-  }, [validateFile])
+  }, [])
 
   // Handle paste from clipboard
   useEffect(() => {
@@ -84,9 +86,18 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
       for (let i = 0; i < items.length; i++) {
         const item = items[i]
         if (item.type.startsWith('image/')) {
-          const file = item.getAsFile()
-          if (file) {
-            imageFiles.push(file)
+          const pastedFile = item.getAsFile()
+          if (pastedFile) {
+            // Create a properly named file for pasted images
+            const timestamp = Date.now()
+            const ext = pastedFile.type.split('/')[1] || 'png'
+            try {
+              const namedFile = new File([pastedFile], `screenshot-${timestamp}.${ext}`, { type: pastedFile.type })
+              imageFiles.push(namedFile)
+            } catch {
+              // Fallback for environments that don't support File constructor
+              imageFiles.push(pastedFile)
+            }
           }
         }
       }
@@ -126,8 +137,8 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
     e.target.value = ''
   }
 
-  const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index))
+  const removeFile = (id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id))
   }
 
   const handleSubmit = async () => {
@@ -142,7 +153,8 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
     ))
 
     try {
-      await onUpload(message || 'Uploaded files for review', validFiles)
+      const filesToUpload = validFiles.map(f => f.file)
+      await onUpload(message || 'Uploaded files for review', filesToUpload)
       
       // Mark as success
       setFiles(prev => prev.map(f => 
@@ -158,7 +170,6 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
         }
       }, 1500)
     } catch (err) {
-      console.error('Upload error:', err)
       setFiles(prev => prev.map(f => 
         f.status === 'uploading' ? { ...f, status: 'error' as const, error: 'Upload failed' } : f
       ))
@@ -181,8 +192,8 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
     return <File size={24} />
   }
 
-  const getStatusIcon = (file: FileWithStatus) => {
-    switch (file.status) {
+  const getStatusIcon = (fileWithStatus: FileWithStatus) => {
+    switch (fileWithStatus.status) {
       case 'uploading':
         return <Loader size={18} className="spin" />
       case 'success':
@@ -233,21 +244,21 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
       {files.length > 0 && (
         <div className="files-list">
           <h4>Selected Files ({files.length})</h4>
-          {files.map((file, index) => (
-            <div key={index} className={`file-item ${file.status}`}>
-              <div className="file-icon">{getFileIcon(file)}</div>
+          {files.map((fileWithStatus) => (
+            <div key={fileWithStatus.id} className={`file-item ${fileWithStatus.status}`}>
+              <div className="file-icon">{getFileIcon(fileWithStatus.file)}</div>
               <div className="file-info">
-                <div className="file-name">{file.name}</div>
+                <div className="file-name">{fileWithStatus.file.name}</div>
                 <div className="file-meta">
-                  <span className="file-size">{formatFileSize(file.size)}</span>
-                  {file.error && <span className="file-error">{file.error}</span>}
+                  <span className="file-size">{formatFileSize(fileWithStatus.file.size)}</span>
+                  {fileWithStatus.error && <span className="file-error">{fileWithStatus.error}</span>}
                 </div>
               </div>
               <div className="file-status">
-                {getStatusIcon(file)}
+                {getStatusIcon(fileWithStatus)}
               </div>
-              {file.status !== 'uploading' && file.status !== 'success' && (
-                <button className="remove-file" onClick={() => removeFile(index)}>
+              {fileWithStatus.status !== 'uploading' && fileWithStatus.status !== 'success' && (
+                <button className="remove-file" onClick={() => removeFile(fileWithStatus.id)}>
                   <X size={18} />
                 </button>
               )}
