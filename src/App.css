@@ -28,6 +28,28 @@
   font-weight: 600;
 }
 
+.logo .refresh-icon {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo .refresh-icon:hover {
+  background: var(--border);
+  transform: rotate(15deg);
+}
+
+.logo .refresh-icon:active {
+  transform: rotate(360deg);
+  transition: transform 0.5s;
+}
+
 .logo svg {
   color: var(--text-muted);
   transition: color 0.3s;

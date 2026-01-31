@@ -234,7 +234,13 @@ function App() {
     <div className="app">
       <nav className="sidebar">
         <div className="logo">
-          <Radio size={24} className={isConnected ? 'connected' : ''} />
+          <button 
+            className="refresh-icon" 
+            onClick={() => window.location.reload()}
+            title="Refresh page"
+          >
+            <Radio size={24} className={isConnected ? 'connected' : ''} />
+          </button>
           <span>Pete's Board</span>
         </div>
         
