@@ -9,24 +9,27 @@
 }
 
 /* ============================================
-   CHAT HEADER - Consistent with page-header pattern
+   CHAT HEADER - Uses shared page-header pattern
    ============================================ */
 .chat-header {
+  display: flex;
+  flex-direction: column;
   padding: var(--space-xl) var(--space-2xl);
   border-bottom: 2px solid var(--border);
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-secondary) 100%);
   position: sticky;
   top: 0;
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-secondary) 100%);
   z-index: 10;
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow-sm);
+  gap: var(--space-sm);
 }
 
 .chat-header h1 {
   font-size: 2.125rem;
   font-weight: 800;
-  margin-bottom: var(--space-sm);
   color: var(--text);
+  margin: 0;
   letter-spacing: -0.04em;
   background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
   -webkit-background-clip: text;
@@ -38,7 +41,6 @@
   color: var(--text-muted);
   font-size: 1rem;
   line-height: 1.6;
-  font-weight: 400;
   margin: 0;
 }
 
@@ -90,20 +92,9 @@
    ============================================ */
 .message {
   display: flex;
-  gap: 0.875rem;
+  gap: var(--space-md);
   max-width: 75%;
-  animation: messageSlide 0.3s ease-out;
-}
-
-@keyframes messageSlide {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  animation: fade-in 0.3s ease-out;
 }
 
 .message.user {
@@ -511,14 +502,7 @@
   cursor: not-allowed;
 }
 
-.send-btn .spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+/* Spinner uses utility class .spin from utilities.css */
 
 /* ============================================
    RESPONSIVE DESIGN

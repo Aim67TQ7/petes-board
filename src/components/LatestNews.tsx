@@ -72,7 +72,7 @@ export default function LatestNews() {
     return (
       <div className="latest-news">
         <div className="news-header">
-          <Newspaper size={24} />
+          <Newspaper size={20} />
           <h2>Latest News</h2>
         </div>
         <div className="loading">Loading news brief...</div>
@@ -84,7 +84,7 @@ export default function LatestNews() {
     return (
       <div className="latest-news">
         <div className="news-header">
-          <Newspaper size={24} />
+          <Newspaper size={20} />
           <h2>Latest News</h2>
         </div>
         <div className="no-news">

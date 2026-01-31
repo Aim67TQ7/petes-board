@@ -296,83 +296,102 @@ function App() {
         </div>
         
         <div className="nav-items">
-          <button 
-            className={`nav-item ${activeView === 'board' ? 'active' : ''}`}
-            onClick={() => setActiveView('board')}
-          >
-            <Kanban size={20} />
-            <span>Board</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'chat' ? 'active' : ''}`}
-            onClick={() => setActiveView('chat')}
-          >
-            <MessageSquare size={20} />
-            <span>Chat with Pete</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'archive' ? 'active' : ''}`}
-            onClick={() => setActiveView('archive')}
-          >
-            <Archive size={20} />
-            <span>Chat Archives</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'parking' ? 'active' : ''}`}
-            onClick={() => setActiveView('parking')}
-          >
-            <ParkingSquare size={20} />
-            <span>Parking Lot</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'downloads' ? 'active' : ''}`}
-            onClick={() => setActiveView('downloads')}
-          >
-            <FolderDown size={20} />
-            <span>Downloads</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'news' ? 'active' : ''}`}
-            onClick={() => setActiveView('news')}
-          >
-            <Newspaper size={20} />
-            <span>Latest News</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'cron' ? 'active' : ''}`}
-            onClick={() => setActiveView('cron')}
-          >
-            <Clock size={20} />
-            <span>Cron Jobs</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'activity' ? 'active' : ''}`}
-            onClick={() => setActiveView('activity')}
-          >
-            <Activity size={20} />
-            <span>Activity Log</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'voice' ? 'active' : ''}`}
-            onClick={() => setActiveView('voice')}
-          >
-            <Mic size={20} />
-            <span>Voice Briefings</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'tokens' ? 'active' : ''}`}
-            onClick={() => setActiveView('tokens')}
-          >
-            <BarChart3 size={20} />
-            <span>Token Usage</span>
-          </button>
-          <button 
-            className={`nav-item ${activeView === 'roi' ? 'active' : ''}`}
-            onClick={() => setActiveView('roi')}
-          >
-            <TrendingUp size={20} />
-            <span>ROI Dashboard</span>
-          </button>
+          <div className="nav-section">
+            <div className="nav-section-label">Workspace</div>
+            <button 
+              className={`nav-item ${activeView === 'board' ? 'active' : ''}`}
+              onClick={() => setActiveView('board')}
+            >
+              <Kanban size={20} />
+              <span>Board</span>
+            </button>
+            <button 
+              className={`nav-item ${activeView === 'parking' ? 'active' : ''}`}
+              onClick={() => setActiveView('parking')}
+            >
+              <ParkingSquare size={20} />
+              <span>Parking Lot</span>
+            </button>
+          </div>
+
+          <div className="nav-section">
+            <div className="nav-section-label">Communication</div>
+            <button 
+              className={`nav-item ${activeView === 'chat' ? 'active' : ''}`}
+              onClick={() => setActiveView('chat')}
+            >
+              <MessageSquare size={20} />
+              <span>Chat</span>
+            </button>
+            <button 
+              className={`nav-item ${activeView === 'archive' ? 'active' : ''}`}
+              onClick={() => setActiveView('archive')}
+            >
+              <Archive size={20} />
+              <span>Archives</span>
+            </button>
+            <button 
+              className={`nav-item ${activeView === 'voice' ? 'active' : ''}`}
+              onClick={() => setActiveView('voice')}
+            >
+              <Mic size={20} />
+              <span>Voice Briefings</span>
+            </button>
+          </div>
+
+          <div className="nav-section">
+            <div className="nav-section-label">Files & Data</div>
+            <button 
+              className={`nav-item ${activeView === 'downloads' ? 'active' : ''}`}
+              onClick={() => setActiveView('downloads')}
+            >
+              <FolderDown size={20} />
+              <span>Downloads</span>
+            </button>
+            <button 
+              className={`nav-item ${activeView === 'news' ? 'active' : ''}`}
+              onClick={() => setActiveView('news')}
+            >
+              <Newspaper size={20} />
+              <span>News</span>
+            </button>
+          </div>
+
+          <div className="nav-section">
+            <div className="nav-section-label">System</div>
+            <button 
+              className={`nav-item ${activeView === 'activity' ? 'active' : ''}`}
+              onClick={() => setActiveView('activity')}
+            >
+              <Activity size={20} />
+              <span>Activity</span>
+            </button>
+            <button 
+              className={`nav-item ${activeView === 'cron' ? 'active' : ''}`}
+              onClick={() => setActiveView('cron')}
+            >
+              <Clock size={20} />
+              <span>Cron Jobs</span>
+            </button>
+          </div>
+
+          <div className="nav-section">
+            <div className="nav-section-label">Analytics</div>
+            <button 
+              className={`nav-item ${activeView === 'tokens' ? 'active' : ''}`}
+              onClick={() => setActiveView('tokens')}
+            >
+              <BarChart3 size={20} />
+              <span>Usage</span>
+            </button>
+            <button 
+              className={`nav-item ${activeView === 'roi' ? 'active' : ''}`}
+              onClick={() => setActiveView('roi')}
+            >
+              <TrendingUp size={20} />
+              <span>ROI</span>
+            </button>
+          </div>
         </div>
 
         <div className="sidebar-footer">
