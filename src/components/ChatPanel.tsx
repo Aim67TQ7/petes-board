@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Message } from '../types'
 import { Send, Paperclip, Radio, User, FileText, Image, X, FileSpreadsheet, Loader } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 import './ChatPanel.css'
 
 // Accepted file types
@@ -113,7 +114,9 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
                   </span>
                   <span className="message-time">{formatTime(message.created_at)}</span>
                 </div>
-                <div className="message-text">{message.content}</div>
+                <div className="message-text">
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                </div>
                 {message.attachments && message.attachments.length > 0 && (
                   <div className="message-attachments">
                     {message.attachments.map((att, i) => (

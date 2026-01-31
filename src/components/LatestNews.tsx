@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { Newspaper, Globe, TrendingUp, Bitcoin, Activity, RefreshCw } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 import './LatestNews.css'
 
 interface NewsBrief {
@@ -49,12 +50,7 @@ export default function LatestNews() {
     })
   }
 
-  // Format content with line breaks
-  const formatContent = (text: string) => {
-    return text.split('\n\n').map((paragraph, i) => (
-      <p key={i}>{paragraph}</p>
-    ))
-  }
+  // Removed - now using ReactMarkdown
 
   if (loading) {
     return (
@@ -103,7 +99,7 @@ export default function LatestNews() {
             <h3>Weather & World News</h3>
           </div>
           <div className="card-content">
-            {formatContent(news.world_news || 'No world news available.')}
+            <ReactMarkdown>{news.world_news || 'No world news available.'}</ReactMarkdown>
           </div>
         </div>
 
@@ -114,7 +110,7 @@ export default function LatestNews() {
             <h3>Markets & Finance</h3>
           </div>
           <div className="card-content">
-            {formatContent(news.financial_news || 'No financial news available.')}
+            <ReactMarkdown>{news.financial_news || 'No financial news available.'}</ReactMarkdown>
           </div>
         </div>
 
@@ -125,7 +121,7 @@ export default function LatestNews() {
             <h3>Bitcoin</h3>
           </div>
           <div className="card-content">
-            {formatContent(news.bitcoin_price || 'No Bitcoin update available.')}
+            <ReactMarkdown>{news.bitcoin_price || 'No Bitcoin update available.'}</ReactMarkdown>
           </div>
         </div>
 
@@ -136,7 +132,7 @@ export default function LatestNews() {
             <h3>Sports & Kansas</h3>
           </div>
           <div className="card-content">
-            {formatContent(news.superbowl || 'No sports/local news available.')}
+            <ReactMarkdown>{news.superbowl || 'No sports/local news available.'}</ReactMarkdown>
           </div>
         </div>
       </div>
