@@ -9,7 +9,7 @@
   background: var(--bg);
 }
 
-/* Board Header */
+/* Board Header - Use consistent page-header pattern */
 .board-header {
   display: flex;
   justify-content: space-between;
@@ -22,6 +22,7 @@
   z-index: 10;
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow-sm);
+  gap: var(--space-lg);
 }
 
 .board-header h1 {
@@ -34,6 +35,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  flex-shrink: 0;
 }
 
 .create-task-btn {
@@ -195,7 +197,7 @@
 }
 
 .task-card {
-  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg) 100%);
+  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
   border: 2px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
@@ -221,9 +223,8 @@
 
 .task-card:hover {
   border-color: var(--accent);
-  transform: translateY(-4px) scale(1.01);
+  transform: translateY(-4px) scale(1.02);
   box-shadow: var(--shadow-lg), var(--glow-accent);
-  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-secondary) 100%);
 }
 
 .task-card:hover::after {
@@ -446,17 +447,19 @@
 
 @media (max-width: 768px) {
   .board-header {
-    padding: 1rem 1.25rem;
+    padding: var(--space-lg) var(--space-xl);
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   .board-header h1 {
-    font-size: 1.35rem;
+    font-size: 1.75rem;
   }
   
   .columns {
     grid-template-columns: 1fr;
-    padding: 1rem;
-    gap: 1rem;
+    padding: var(--space-xl);
+    gap: var(--space-xl);
   }
   
   .column {
@@ -468,6 +471,35 @@
   }
   
   .create-task-btn {
-    padding: 0.625rem;
+    padding: var(--space-md);
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .board-header {
+    padding: var(--space-md) var(--space-lg);
+  }
+  
+  .board-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .columns {
+    padding: var(--space-lg);
+    gap: var(--space-lg);
+  }
+  
+  .column-header {
+    padding: var(--space-md) var(--space-lg);
+  }
+  
+  .task-list {
+    padding: var(--space-md);
+  }
+  
+  .task-card {
+    padding: var(--space-md);
   }
 }

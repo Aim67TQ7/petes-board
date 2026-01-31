@@ -10,7 +10,7 @@
 .sidebar {
   width: 260px;
   background: linear-gradient(180deg, var(--surface) 0%, var(--bg-secondary) 100%);
-  border-right: 1px solid var(--border);
+  border-right: 2px solid var(--border);
   display: flex;
   flex-direction: column;
   padding: var(--space-lg) var(--space-md);
@@ -21,6 +21,7 @@
   z-index: 100;
   box-shadow: var(--shadow-lg), 2px 0 0 0 rgba(88, 166, 255, 0.05);
   overflow: hidden;
+  transition: all var(--transition-base);
 }
 
 .logo {
@@ -35,8 +36,14 @@
   letter-spacing: -0.03em;
   background: var(--surface-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-light);
+  border: 2px solid var(--border-light);
   box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.logo:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md), var(--glow-accent);
 }
 
 .logo .refresh-icon {
@@ -155,14 +162,15 @@
 
 /* Sidebar Footer */
 .sidebar-footer {
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--border);
+  padding-top: var(--space-lg);
+  border-top: 2px solid var(--border);
   margin-top: auto;
 }
 
 /* Sidebar footer button inherits from shared .btn-primary but needs full width */
 .sidebar-footer .btn-primary {
   width: 100%;
+  font-weight: 700;
 }
 
 /* ============================================
@@ -215,17 +223,18 @@
 
 @media (max-width: 768px) {
   .sidebar {
-    width: 64px;
-    padding: 0.5rem 0.25rem;
+    width: 70px;
+    padding: var(--space-md) var(--space-sm);
   }
   
   .main-content {
-    margin-left: 64px;
+    margin-left: 70px;
   }
   
   .logo {
     justify-content: center;
-    padding: 0.5rem 0;
+    padding: var(--space-sm);
+    margin-bottom: var(--space-lg);
   }
   
   .logo span,
@@ -235,21 +244,25 @@
   
   .nav-item {
     justify-content: center;
-    padding: 0.75rem;
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
   }
   
   .nav-item:hover {
-    transform: translateX(0) scale(1.05);
+    transform: translateX(0) scale(1.08);
   }
   
   .sidebar-footer {
-    padding-top: 0.75rem;
+    padding-top: var(--space-md);
   }
   
   .sidebar-footer .btn-primary {
-    padding: 0.75rem 0.5rem;
+    padding: var(--space-md);
     font-size: 1.5rem;
     line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .sidebar-footer .btn-primary::before {
@@ -268,10 +281,19 @@
 
 @media (max-width: 480px) {
   .sidebar {
-    width: 56px;
+    width: 60px;
+    padding: var(--space-sm) var(--space-xs);
   }
   
   .main-content {
-    margin-left: 56px;
+    margin-left: 60px;
+  }
+  
+  .logo {
+    padding: var(--space-xs);
+  }
+  
+  .nav-item {
+    padding: var(--space-sm);
   }
 }
