@@ -5,11 +5,15 @@
   overflow: hidden;
 }
 
+.latest-news.compact {
+  padding: 12px;
+}
+
 .news-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 20px 20px 8px;
+  gap: 10px;
+  padding: 12px 16px;
   position: sticky;
   top: 0;
   background: var(--bg);
@@ -20,6 +24,7 @@
 .news-header h2 {
   margin: 0;
   flex: 1;
+  font-size: 1.25rem;
 }
 
 .news-header svg {
@@ -29,8 +34,8 @@
 .refresh-btn {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 6px;
+  padding: 6px;
   cursor: pointer;
   color: var(--text-muted);
   transition: all 0.2s;
@@ -43,158 +48,172 @@
 
 .news-date {
   color: var(--text-muted);
-  font-size: 0.85rem;
-  padding: 12px 20px;
+  font-size: 0.75rem;
+  padding: 8px 16px;
   margin: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .loading, .no-news {
   text-align: center;
-  padding: 60px 20px;
+  padding: 40px 20px;
   color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
-.no-news .hint {
-  font-size: 0.85rem;
-  margin-top: 8px;
-  opacity: 0.7;
-}
-
-.news-sections {
-  display: grid;
-  gap: 20px;
-  padding: 0 20px 20px;
+.news-sections-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 16px;
   overflow-y: auto;
   flex: 1;
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
+  background: var(--border);
+  border-radius: 8px;
+  margin: 0 16px 16px 16px;
 }
 
-.news-card {
+.news-row {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.news-row:last-child {
+  border-bottom: none;
+}
+
+.news-row.expanded {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  border-left: 4px solid var(--primary);
 }
 
-/* Card colors by type */
-.news-card.weather { border-left-color: #06b6d4; }
-.news-card.world { border-left-color: #3b82f6; }
-.news-card.prices { border-left-color: #f59e0b; }
-.news-card.financial { border-left-color: #22c55e; }
-.news-card.sports { border-left-color: #8b5cf6; }
-.news-card.kansas { border-left-color: #ef4444; }
-
-.card-header {
+.news-summary {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.card-header h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
+.news-summary:hover {
+  background: var(--surface);
 }
 
-/* Icon colors by type */
-.news-card.weather .card-header svg { color: #06b6d4; }
-.news-card.world .card-header svg { color: #3b82f6; }
-.news-card.prices .card-header svg { color: #f59e0b; }
-.news-card.financial .card-header svg { color: #22c55e; }
-.news-card.sports .card-header svg { color: #8b5cf6; }
-.news-card.kansas .card-header svg { color: #ef4444; }
+.news-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
-.card-content p {
-  margin: 0 0 12px 0;
-  line-height: 1.6;
+.news-title {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
   color: var(--text);
 }
 
-.card-content p:last-child {
+.expand-icon {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.news-content-expanded {
+  padding: 14px 18px 16px 52px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.news-content-expanded p {
+  margin: 0 0 10px 0;
+  line-height: 1.6;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.news-content-expanded p:last-child {
   margin-bottom: 0;
 }
 
 /* Markdown rendering styles */
-.card-content strong {
+.news-content-expanded strong {
   font-weight: 600;
   color: var(--text);
 }
 
-.card-content em {
+.news-content-expanded em {
   font-style: italic;
 }
 
-.card-content code {
-  background: var(--bg);
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.85em;
+.news-content-expanded code {
+  background: var(--surface);
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  font-size: 0.8em;
   font-family: 'Courier New', monospace;
   color: var(--accent);
 }
 
-.card-content pre {
-  background: var(--bg);
-  padding: 0.75rem;
-  border-radius: var(--radius);
+.news-content-expanded pre {
+  background: var(--surface);
+  padding: 0.6rem;
+  border-radius: 6px;
   overflow-x: auto;
-  margin: 0.75rem 0;
+  margin: 0.5rem 0;
 }
 
-.card-content pre code {
+.news-content-expanded pre code {
   background: none;
   padding: 0;
   color: var(--text);
 }
 
-.card-content ul,
-.card-content ol {
-  margin: 0.75rem 0;
-  padding-left: 1.5rem;
+.news-content-expanded ul,
+.news-content-expanded ol {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
 }
 
-.card-content li {
-  margin: 0.25rem 0;
-  line-height: 1.6;
+.news-content-expanded li {
+  margin: 0.2rem 0;
+  line-height: 1.5;
 }
 
-.card-content a {
+.news-content-expanded a {
   color: var(--accent);
   text-decoration: none;
 }
 
-.card-content a:hover {
+.news-content-expanded a:hover {
   text-decoration: underline;
 }
 
-.card-content blockquote {
-  border-left: 3px solid var(--border);
-  padding-left: 1rem;
-  margin: 0.75rem 0;
+.news-content-expanded blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 0.75rem;
+  margin: 0.5rem 0;
   color: var(--text-muted);
 }
 
-.card-content h1,
-.card-content h2,
-.card-content h3,
-.card-content h4,
-.card-content h5,
-.card-content h6 {
-  margin: 0.75rem 0 0.5rem;
+.news-content-expanded h1,
+.news-content-expanded h2,
+.news-content-expanded h3,
+.news-content-expanded h4,
+.news-content-expanded h5,
+.news-content-expanded h6 {
+  margin: 0.5rem 0 0.35rem;
   font-weight: 600;
 }
 
-.card-content h1 { font-size: 1.3em; }
-.card-content h2 { font-size: 1.2em; }
-.card-content h3 { font-size: 1.1em; }
-.card-content h4 { font-size: 1em; }
-.card-content h5 { font-size: 0.9em; }
-.card-content h6 { font-size: 0.85em; }
-
-/* Sports card color */
-.news-card.sports { border-left-color: #8b5cf6; }
-.news-card.sports .card-header svg { color: #8b5cf6; }
+.news-content-expanded h1 { font-size: 1.15em; }
+.news-content-expanded h2 { font-size: 1.1em; }
+.news-content-expanded h3 { font-size: 1.05em; }
+.news-content-expanded h4 { font-size: 1em; }
+.news-content-expanded h5 { font-size: 0.9em; }
+.news-content-expanded h6 { font-size: 0.85em; }

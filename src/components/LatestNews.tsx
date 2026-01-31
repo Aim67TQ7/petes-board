@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Newspaper, Globe, TrendingUp, Bitcoin, Activity, RefreshCw } from 'lucide-react'
+import { Newspaper, Globe, TrendingUp, Bitcoin, Activity, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import './LatestNews.css'
 
@@ -16,6 +16,7 @@ interface NewsBrief {
 export default function LatestNews() {
   const [news, setNews] = useState<NewsBrief | null>(null)
   const [loading, setLoading] = useState(true)
+  const [expandedSection, setExpandedSection] = useState<string | null>('world')
 
   const loadNews = async () => {
     setLoading(true)
@@ -79,62 +80,54 @@ export default function LatestNews() {
     )
   }
 
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section)
+  }
+
+  const sections = [
+    { id: 'world', title: 'Weather & World', icon: Globe, content: news.world_news, color: '#3b82f6' },
+    { id: 'financial', title: 'Markets & Finance', icon: TrendingUp, content: news.financial_news, color: '#10b981' },
+    { id: 'bitcoin', title: 'Bitcoin', icon: Bitcoin, content: news.bitcoin_price, color: '#f59e0b' },
+    { id: 'sports', title: 'Sports & Kansas', icon: Activity, content: news.superbowl, color: '#8b5cf6' }
+  ]
+
   return (
-    <div className="latest-news">
+    <div className="latest-news compact">
       <div className="news-header">
-        <Newspaper size={24} />
+        <Newspaper size={20} />
         <h2>Latest News</h2>
         <button className="refresh-btn" onClick={loadNews} title="Refresh">
-          <RefreshCw size={18} />
+          <RefreshCw size={16} />
         </button>
       </div>
       
       <p className="news-date">Updated: {formatDate(news.created_at)}</p>
 
-      <div className="news-sections">
-        {/* Weather & World News */}
-        <div className="news-card world">
-          <div className="card-header">
-            <Globe size={20} />
-            <h3>Weather & World News</h3>
-          </div>
-          <div className="card-content">
-            <ReactMarkdown>{news.world_news || 'No world news available.'}</ReactMarkdown>
-          </div>
-        </div>
-
-        {/* Spot Prices & Finance */}
-        <div className="news-card financial">
-          <div className="card-header">
-            <TrendingUp size={20} />
-            <h3>Markets & Finance</h3>
-          </div>
-          <div className="card-content">
-            <ReactMarkdown>{news.financial_news || 'No financial news available.'}</ReactMarkdown>
-          </div>
-        </div>
-
-        {/* Bitcoin */}
-        <div className="news-card bitcoin">
-          <div className="card-header">
-            <Bitcoin size={20} />
-            <h3>Bitcoin</h3>
-          </div>
-          <div className="card-content">
-            <ReactMarkdown>{news.bitcoin_price || 'No Bitcoin update available.'}</ReactMarkdown>
-          </div>
-        </div>
-
-        {/* Sports & Kansas */}
-        <div className="news-card sports">
-          <div className="card-header">
-            <Activity size={20} />
-            <h3>Sports & Kansas</h3>
-          </div>
-          <div className="card-content">
-            <ReactMarkdown>{news.superbowl || 'No sports/local news available.'}</ReactMarkdown>
-          </div>
-        </div>
+      <div className="news-sections-compact">
+        {sections.map(section => {
+          const Icon = section.icon
+          const isExpanded = expandedSection === section.id
+          
+          return (
+            <div key={section.id} className={`news-row ${isExpanded ? 'expanded' : ''}`}>
+              <div className="news-summary" onClick={() => toggleSection(section.id)}>
+                <div className="news-icon" style={{ color: section.color }}>
+                  <Icon size={16} />
+                </div>
+                <span className="news-title">{section.title}</span>
+                <span className="expand-icon">
+                  {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </span>
+              </div>
+              
+              {isExpanded && (
+                <div className="news-content-expanded">
+                  <ReactMarkdown>{section.content || `No ${section.title.toLowerCase()} available.`}</ReactMarkdown>
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
