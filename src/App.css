@@ -88,11 +88,28 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-lg);
   overflow-y: auto;
   padding-right: var(--space-xs);
   margin-top: var(--space-sm);
   scrollbar-width: thin;
+}
+
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.nav-section-label {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-subtle);
+  padding: 0 var(--space-lg);
+  margin-bottom: var(--space-xs);
+  opacity: 0.6;
 }
 
 .nav-item {
@@ -238,8 +255,17 @@
   }
   
   .logo span,
-  .nav-item span {
+  .nav-item span,
+  .nav-section-label {
     display: none;
+  }
+  
+  .nav-items {
+    gap: var(--space-xs);
+  }
+  
+  .nav-section {
+    gap: var(--space-xs);
   }
   
   .nav-item {

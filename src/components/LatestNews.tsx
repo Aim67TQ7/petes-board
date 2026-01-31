@@ -71,11 +71,15 @@ export default function LatestNews() {
   if (loading) {
     return (
       <div className="latest-news">
-        <div className="news-header">
-          <Newspaper size={20} />
-          <h2>Latest News</h2>
+        <header className="page-header">
+          <h1>Latest News</h1>
+        </header>
+        <div className="page-content">
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Loading news brief...</p>
+          </div>
         </div>
-        <div className="loading">Loading news brief...</div>
       </div>
     )
   }
@@ -83,13 +87,15 @@ export default function LatestNews() {
   if (!news) {
     return (
       <div className="latest-news">
-        <div className="news-header">
-          <Newspaper size={20} />
-          <h2>Latest News</h2>
-        </div>
-        <div className="no-news">
-          <p>No news briefs yet.</p>
-          <p className="hint">Daily briefings are generated at 4:00 AM CDT.</p>
+        <header className="page-header">
+          <h1>Latest News</h1>
+        </header>
+        <div className="page-content">
+          <div className="empty-state-container">
+            <Newspaper size={64} />
+            <h3>No news briefs yet</h3>
+            <p>Daily briefings are generated at 4:00 AM CDT.</p>
+          </div>
         </div>
       </div>
     )
@@ -108,17 +114,21 @@ export default function LatestNews() {
 
   return (
     <div className="latest-news compact">
-      <div className="news-header">
-        <Newspaper size={20} />
-        <h2>Latest News</h2>
-        <button className="refresh-btn" onClick={loadNews} title="Refresh">
-          <RefreshCw size={16} />
-        </button>
-      </div>
-      
-      <p className="news-date">Updated: {formatDate(news.created_at)}</p>
+      <header className="page-header">
+        <div>
+          <h1>Latest News</h1>
+          <p>Updated: {formatDate(news.created_at)}</p>
+        </div>
+        <div className="page-header-actions">
+          <button className="btn-secondary btn-sm" onClick={loadNews} title="Refresh news">
+            <RefreshCw size={16} />
+            <span>Refresh</span>
+          </button>
+        </div>
+      </header>
 
-      <div className="news-sections-compact">
+      <div className="page-content">
+        <div className="news-sections-compact">
         {sections.map(section => {
           const Icon = section.icon
           const isExpanded = expandedSection === section.id
@@ -143,11 +153,12 @@ export default function LatestNews() {
             </div>
           )
         })}
-      </div>
+        </div>
 
-      <p className="footer-note">
-        Daily briefings generated at 4:00 AM CDT · Real-time updates enabled
-      </p>
+        <p className="footer-note">
+          Daily briefings generated at 4:00 AM CDT · Real-time updates enabled
+        </p>
+      </div>
     </div>
   )
 }

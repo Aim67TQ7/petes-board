@@ -142,14 +142,20 @@ export default function Downloads() {
   if (error) {
     return (
       <div className="downloads-page compact">
-        <div className="downloads-header">
-          <Download size={20} />
-          <h2>Downloads</h2>
-          <span className="file-count">Error</span>
-        </div>
-        <div className="downloads-error">
-          <p>Error loading files: {error}</p>
-          <button onClick={fetchFiles}>Retry</button>
+        <header className="page-header">
+          <div>
+            <h1>Downloads</h1>
+            <p>Error loading files</p>
+          </div>
+        </header>
+        <div className="page-content">
+          <div className="error-box">
+            <p>Error loading files: {error}</p>
+          </div>
+          <button className="btn-primary" onClick={fetchFiles}>
+            <RefreshCw size={16} />
+            Retry
+          </button>
         </div>
       </div>
     )
@@ -161,21 +167,28 @@ export default function Downloads() {
 
   return (
     <div className="downloads-page compact">
-      <div className="downloads-header">
-        <Download size={20} />
-        <h2>Downloads</h2>
-        <span className="file-count">{files.length}</span>
-        <button className="refresh-btn" onClick={fetchFiles} title="Refresh">
-          <RefreshCw size={16} />
-        </button>
-      </div>
-
-      {files.length === 0 ? (
-        <div className="downloads-empty">
-          <p>No files uploaded yet</p>
+      <header className="page-header">
+        <div>
+          <h1>Downloads</h1>
+          <p>{files.length} file{files.length !== 1 ? 's' : ''} available</p>
         </div>
-      ) : (
-        <div className="downloads-list-compact">
+        <div className="page-header-actions">
+          <button className="btn-secondary btn-sm" onClick={fetchFiles} title="Refresh files">
+            <RefreshCw size={16} />
+            <span>Refresh</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="page-content">
+        {files.length === 0 ? (
+          <div className="empty-state-container">
+            <Download size={64} />
+            <h3>No files yet</h3>
+            <p>Files uploaded by Pete will appear here</p>
+          </div>
+        ) : (
+          <div className="downloads-list-compact">
           {files.map((file) => {
             const fileId = file.id || file.name
             const isExpanded = expandedId === fileId
@@ -233,12 +246,13 @@ export default function Downloads() {
               </div>
             )
           })}
-        </div>
-      )}
+          </div>
+        )}
 
-      <p className="footer-note">
-        Files uploaded to Pete's Board storage · Click to expand details
-      </p>
+        <p className="footer-note">
+          Files uploaded to Pete's Board storage · Click to expand details
+        </p>
+      </div>
     </div>
   )
 }

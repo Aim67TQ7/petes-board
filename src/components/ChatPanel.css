@@ -9,39 +9,10 @@
 }
 
 /* ============================================
-   CHAT HEADER - Uses shared page-header pattern
+   CHAT HEADER - Extends shared page-header
    ============================================ */
 .chat-header {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-xl) var(--space-2xl);
-  border-bottom: 2px solid var(--border);
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-secondary) 100%);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-sm);
-  gap: var(--space-sm);
-}
-
-.chat-header h1 {
-  font-size: 2.125rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0;
-  letter-spacing: -0.04em;
-  background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.chat-header p {
-  color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1.6;
-  margin: 0;
+  /* Inherits from .page-header */
 }
 
 /* ============================================

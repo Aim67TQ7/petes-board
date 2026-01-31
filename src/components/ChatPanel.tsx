@@ -117,9 +117,11 @@ export default function ChatPanel({ messages, onSendMessage }: Props) {
 
   return (
     <div className="chat-panel">
-      <header className="chat-header">
-        <h1>Chat with Pete</h1>
-        <p>Ask questions, give instructions, or upload files for analysis</p>
+      <header className="page-header chat-header">
+        <div>
+          <h1>Chat with Pete</h1>
+          <p>Ask questions, give instructions, or upload files for analysis</p>
+        </div>
       </header>
 
       {tts.isSupported && (

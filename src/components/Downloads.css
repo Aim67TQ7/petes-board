@@ -1,203 +1,95 @@
-/* ============================================
-   DOWNLOADS PAGE - Standardized Layout
-   ============================================ */
-.downloads-page {
+@import './SharedCompact.css';
+
+.downloads-page.compact {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg);
   overflow: hidden;
-}
-
-/* Header - Uses shared page-header pattern */
-.downloads-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-xl) var(--space-2xl);
-  border-bottom: 2px solid var(--border);
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-secondary) 100%);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-sm);
-  gap: var(--space-lg);
-}
-
-.downloads-header h2 {
-  font-size: 2.125rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0;
-  letter-spacing: -0.04em;
-  background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.downloads-header svg {
-  color: var(--accent);
-  margin-right: var(--space-sm);
-}
-
-.file-count {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-  color: white;
-  font-size: 0.8125rem;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-lg);
-  font-weight: 800;
-  border: 2px solid var(--border-light);
-  min-width: 36px;
-  text-align: center;
-  box-shadow: var(--shadow-xs);
-  letter-spacing: 0.02em;
-}
-
-.refresh-btn {
-  background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-md);
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: all var(--transition-base);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.refresh-btn:hover {
-  background: var(--surface-hover);
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-/* Downloads Content Area */
-.downloads-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-2xl);
-  scrollbar-width: thin;
+  background: var(--bg);
 }
 
 /* Downloads List */
 .downloads-list-compact {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: var(--space-sm);
 }
 
-/* Download Row */
+/* Download Row - Use compact-row pattern */
 .download-row {
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
+  background: var(--surface);
   border: 2px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
   transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
 }
 
 .download-row:hover {
   border-color: var(--accent);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .download-row.expanded {
   border-color: var(--accent);
-  box-shadow: var(--shadow-lg), var(--glow-accent);
+  box-shadow: var(--shadow-md);
 }
 
 .download-summary {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-lg) var(--space-xl);
+  gap: 10px;
+  padding: 10px 12px;
   cursor: pointer;
   user-select: none;
-  transition: background var(--transition-base);
 }
 
 .download-summary:hover {
-  background: var(--surface-hover);
+  background: var(--background);
 }
 
 .download-icon-compact {
-  width: 28px;
-  height: 28px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  color: var(--accent);
-  background: rgba(88, 166, 255, 0.1);
-  border-radius: var(--radius);
-  padding: var(--space-xs);
+  color: var(--primary);
 }
 
 .download-name {
   flex: 1;
-  font-weight: 600;
-  font-size: 0.9375rem;
+  font-weight: 500;
+  font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--text);
-  letter-spacing: -0.01em;
 }
 
 .download-size-badge {
   font-size: 0.75rem;
   color: var(--text-muted);
-  background: var(--bg);
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  background: var(--background);
+  padding: 2px 8px;
+  border-radius: 4px;
   white-space: nowrap;
-  font-weight: 600;
 }
 
 .expand-icon {
   color: var(--text-muted);
   flex-shrink: 0;
-  transition: transform var(--transition-base);
-}
-
-.download-row.expanded .expand-icon {
-  transform: rotate(180deg);
 }
 
 /* Download Details - Expanded */
 .download-details {
-  padding: var(--space-lg) var(--space-xl);
-  border-top: 2px solid var(--border);
-  background: var(--bg-secondary);
-  animation: slide-down var(--transition-base);
-}
-
-@keyframes slide-down {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--background);
 }
 
 .detail-row {
   display: flex;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
-  font-size: 0.875rem;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
 }
 
 .detail-row:last-child {
@@ -205,11 +97,10 @@
 }
 
 .detail-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   color: var(--text-muted);
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.5px;
   min-width: 80px;
   flex-shrink: 0;
 }
@@ -218,43 +109,39 @@
   color: var(--text);
   word-break: break-word;
   flex: 1;
-  line-height: 1.6;
 }
 
 /* Download Actions */
 .download-actions {
   display: flex;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-  padding-top: var(--space-lg);
-  border-top: 2px solid var(--border);
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
 }
 
 .download-btn,
 .view-btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  font-size: 0.875rem;
-  padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius);
+  gap: 6px;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 6px;
   text-decoration: none;
-  transition: all var(--transition-base);
-  font-weight: 600;
-  border: 2px solid;
+  transition: all 0.2s;
+  font-weight: 500;
+  border: 1px solid;
 }
 
 .download-btn {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  background: var(--primary);
   color: white;
-  border-color: var(--accent);
-  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+  border-color: var(--primary);
 }
 
 .download-btn:hover {
-  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(88, 166, 255, 0.4);
+  opacity: 0.9;
 }
 
 .view-btn {
@@ -264,131 +151,92 @@
 }
 
 .view-btn:hover {
-  background: var(--surface-hover);
+  background: var(--background);
   color: var(--text);
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
 }
 
-/* Loading & Empty States - Use shared patterns */
+/* Loading & Empty States */
 .downloads-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2xl);
-  min-height: 300px;
-  gap: var(--space-lg);
+  padding: 24px 16px;
+  gap: 12px;
 }
 
-.downloads-loading p {
+.downloads-loading span {
   color: var(--text-muted);
-  font-size: 0.9375rem;
+  font-size: 0.9rem;
+}
+
+.downloads-loading .spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .downloads-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-2xl);
   text-align: center;
+  padding: 24px 16px;
   color: var(--text-muted);
-  min-height: 300px;
-}
-
-.downloads-empty svg {
-  width: 64px;
-  height: 64px;
-  opacity: 0.25;
-  margin-bottom: var(--space-lg);
-  color: var(--text-subtle);
-}
-
-.downloads-empty h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: var(--space-sm);
-}
-
-.downloads-empty p {
-  color: var(--text-subtle);
-  max-width: 400px;
-  font-size: 0.9375rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
 }
 
 .downloads-error {
-  background: linear-gradient(135deg, rgba(248, 81, 73, 0.1) 0%, rgba(248, 81, 73, 0.05) 100%);
-  border: 2px solid var(--danger);
-  border-radius: var(--radius-md);
-  padding: var(--space-xl);
-  margin: var(--space-lg) 0;
-  color: var(--danger);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-md);
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  text-align: center;
+  padding: 24px 16px;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  font-size: 0.9rem;
 }
 
 .downloads-error button {
-  margin-top: var(--space-md);
-  padding: var(--space-md) var(--space-lg);
-  background: linear-gradient(135deg, var(--danger) 0%, var(--danger-hover) 100%);
+  margin-top: 12px;
+  padding: 6px 12px;
+  background: #ef4444;
   color: white;
   border: none;
-  border-radius: var(--radius);
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
-  transition: all var(--transition-base);
-  box-shadow: 0 4px 12px rgba(248, 81, 73, 0.3);
+  font-size: 0.85rem;
+  transition: all 0.2s;
 }
 
 .downloads-error button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(248, 81, 73, 0.4);
+  opacity: 0.9;
 }
 
 /* Footer Note */
 .footer-note {
   text-align: center;
   font-size: 0.75rem;
-  color: var(--text-subtle);
-  margin-top: var(--space-xl);
-  padding: var(--space-md);
-  opacity: 0.6;
-  font-style: italic;
+  color: var(--text-muted);
+  margin-top: 16px;
+  opacity: 0.7;
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
-@media (max-width: 768px) {
-  .downloads-header {
-    padding: var(--space-lg) var(--space-xl);
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .downloads-header h2 {
-    font-size: 1.75rem;
-  }
-  
-  .downloads-content {
-    padding: var(--space-xl);
+/* Mobile */
+@media (max-width: 600px) {
+  .downloads-page.compact {
+    padding: 8px;
   }
   
   .download-summary {
-    padding: var(--space-md) var(--space-lg);
+    padding: 8px 10px;
+  }
+  
+  .download-size-badge {
+    display: none;
   }
   
   .download-name {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
   }
   
   .download-actions {
@@ -399,24 +247,5 @@
   .view-btn {
     width: 100%;
     justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .downloads-header {
-    padding: var(--space-md) var(--space-lg);
-  }
-  
-  .downloads-header h2 {
-    font-size: 1.5rem;
-  }
-  
-  .downloads-content {
-    padding: var(--space-lg);
-  }
-  
-  .download-icon-compact {
-    width: 24px;
-    height: 24px;
   }
 }
