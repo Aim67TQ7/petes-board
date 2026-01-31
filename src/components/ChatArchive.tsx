@@ -85,7 +85,7 @@ export default function ChatArchive() {
         yrmoda: `${yy}${mm}${dd}`
       }
       
-      // Add messages for this date if any
+      // Add messages for this date if unknown
       if (messagesByDate[dateKey]) {
         archiveItems.push({
           type: 'messages',

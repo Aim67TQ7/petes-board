@@ -12,7 +12,8 @@ export const requestNotificationPermission = async () => {
 // Play notification sound
 export const playNotificationSound = () => {
   // Create a simple beep sound using Web Audio API
-  const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+  const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+  const audioContext = new AudioContextClass()
   const oscillator = audioContext.createOscillator()
   const gainNode = audioContext.createGain()
   

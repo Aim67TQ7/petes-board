@@ -193,7 +193,7 @@ function App() {
     }
   }
 
-  const handleSendMessage = async (content: string, attachments?: File[]): Promise<void> => {
+  const handleSendMessage = async (content: string, attachments?: Array<File>): Promise<void> => {
     const uploadedAttachments = []
     
     if (attachments && attachments.length > 0) {

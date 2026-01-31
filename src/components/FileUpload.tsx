@@ -52,7 +52,7 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
             // Create a new file with a proper name
             const timestamp = Date.now()
             const ext = file.type.split('/')[1] || 'png'
-            const namedFile = new (window.File as any)([file], `screenshot-${timestamp}.${ext}`, { type: file.type }) as File
+            const namedFile = new File([file], `screenshot-${timestamp}.${ext}`, { type: file.type })
             imageFiles.push(namedFile)
           }
         }

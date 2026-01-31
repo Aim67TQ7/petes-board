@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
-import { Mic, Play, Pause, RefreshCw, Volume2, Calendar } from 'lucide-react'
+import { Mic, Play, Pause, RefreshCw, ChevronDown, ChevronUp, Calendar, Clock } from 'lucide-react'
 import './VoiceBriefings.css'
 
 interface Briefing {
@@ -16,7 +16,7 @@ export default function VoiceBriefings() {
   const [briefings, setBriefings] = useState<Briefing[]>([])
   const [loading, setLoading] = useState(true)
   const [playing, setPlaying] = useState<string | null>(null)
-  const [expanded, setExpanded] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const loadBriefings = async () => {
@@ -53,10 +53,13 @@ export default function VoiceBriefings() {
     }
   }
 
+  const toggleExpand = (id: string) => {
+    setExpandedId(expandedId === id ? null : id)
+  }
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     })
@@ -77,30 +80,26 @@ export default function VoiceBriefings() {
 
   if (loading) {
     return (
-      <div className="voice-briefings">
+      <div className="voice-briefings compact">
         <div className="briefings-header">
-          <Mic size={24} />
+          <Mic size={20} />
           <h2>Voice Briefings</h2>
         </div>
-        <div className="loading">Loading briefings...</div>
+        <div className="loading">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="voice-briefings">
+    <div className="voice-briefings compact">
       <div className="briefings-header">
-        <Mic size={24} />
+        <Mic size={20} />
         <h2>Voice Briefings</h2>
+        <span className="briefing-count">{briefings.length}</span>
         <button className="refresh-btn" onClick={loadBriefings} title="Refresh">
-          <RefreshCw size={18} />
+          <RefreshCw size={16} />
         </button>
       </div>
-
-      <p className="briefings-intro">
-        <Volume2 size={16} />
-        Pete delivers daily audio briefings summarizing accomplishments and priorities.
-      </p>
 
       {briefings.length === 0 ? (
         <div className="no-briefings">
@@ -108,45 +107,70 @@ export default function VoiceBriefings() {
           <p className="hint">Morning briefings are generated around 3 AM CDT.</p>
         </div>
       ) : (
-        <div className="briefings-list">
-          {briefings.map(briefing => (
-            <div key={briefing.id} className="briefing-card">
-              <div className="briefing-header">
-                <button 
-                  className={`play-btn ${playing === briefing.id ? 'playing' : ''}`}
-                  onClick={() => togglePlay(briefing)}
-                >
-                  {playing === briefing.id ? <Pause size={24} /> : <Play size={24} />}
-                </button>
-                <div className="briefing-info">
-                  <h3>{briefing.title}</h3>
-                  <div className="briefing-meta">
-                    <span><Calendar size={14} /> {formatDate(briefing.created_at)}</span>
-                    <span>{formatTime(briefing.created_at)}</span>
-                    {briefing.duration_seconds && (
-                      <span>{formatDuration(briefing.duration_seconds)}</span>
+        <div className="briefings-list compact">
+          {briefings.map(briefing => {
+            const isExpanded = expandedId === briefing.id
+            const isPlaying = playing === briefing.id
+            
+            return (
+              <div key={briefing.id} className={`briefing-row ${isExpanded ? 'expanded' : ''}`}>
+                {/* Collapsed row - always visible */}
+                <div className="briefing-summary" onClick={() => toggleExpand(briefing.id)}>
+                  <button 
+                    className={`play-btn-compact ${isPlaying ? 'playing' : ''}`}
+                    onClick={(e) => { e.stopPropagation(); togglePlay(briefing); }}
+                  >
+                    {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                  </button>
+                  <span className="briefing-title">{briefing.title}</span>
+                  <span className="briefing-date-badge">{formatDate(briefing.created_at)}</span>
+                  {briefing.duration_seconds && (
+                    <span className="duration-badge">{formatDuration(briefing.duration_seconds)}</span>
+                  )}
+                  <span className="expand-icon">
+                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </span>
+                </div>
+
+                {/* Expanded details */}
+                {isExpanded && (
+                  <div className="briefing-details">
+                    <div className="detail-grid">
+                      <div className="detail-item">
+                        <span className="detail-label">Date & Time</span>
+                        <div className="detail-value">
+                          <Calendar size={14} />
+                          <span>{formatDate(briefing.created_at)}</span>
+                          <span className="time-badge">{formatTime(briefing.created_at)}</span>
+                        </div>
+                      </div>
+
+                      {briefing.duration_seconds && (
+                        <div className="detail-item">
+                          <span className="detail-label">Duration</span>
+                          <div className="detail-value">
+                            <Clock size={14} />
+                            <span>{formatDuration(briefing.duration_seconds)}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {briefing.transcript && (
+                      <div className="transcript-section">
+                        <span className="detail-label">Transcript</span>
+                        <p className="transcript-text">{briefing.transcript}</p>
+                      </div>
                     )}
                   </div>
-                </div>
+                )}
               </div>
-              
-              {briefing.transcript && (
-                <div className="briefing-transcript">
-                  <button 
-                    className="transcript-toggle"
-                    onClick={() => setExpanded(expanded === briefing.id ? null : briefing.id)}
-                  >
-                    {expanded === briefing.id ? 'Hide transcript' : 'Show transcript'}
-                  </button>
-                  {expanded === briefing.id && (
-                    <p className="transcript-text">{briefing.transcript}</p>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
+
+      <p className="footer-note">Daily briefings generated at 3:00 AM CDT</p>
     </div>
   )
 }
