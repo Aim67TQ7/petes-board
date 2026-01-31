@@ -37,6 +37,43 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
 
+  const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      return { valid: false, error: 'File too large (max 50MB)' }
+    }
+
+    // Check file type by extension for flexibility
+    const ext = file.name.split('.').pop()?.toLowerCase()
+    const validExts = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'csv', 'xls', 'xlsx', 'doc', 'docx', 'txt']
+    
+    if (ext && validExts.includes(ext)) {
+      return { valid: true }
+    }
+
+    // Check MIME type
+    if (ACCEPTED_TYPES[file.type as keyof typeof ACCEPTED_TYPES]) {
+      return { valid: true }
+    }
+
+    return { valid: false, error: 'Unsupported file type' }
+  }, [])
+
+  const addFiles = useCallback((newFiles: File[]) => {
+    const validatedFiles = newFiles.map(file => {
+      const validation = validateFile(file)
+      const fileWithStatus = file as FileWithStatus
+      if (!validation.valid) {
+        fileWithStatus.status = 'error'
+        fileWithStatus.error = validation.error
+      } else {
+        fileWithStatus.status = 'pending'
+      }
+      return fileWithStatus
+    })
+    setFiles(prev => [...prev, ...validatedFiles])
+  }, [validateFile])
+
   // Handle paste from clipboard
   useEffect(() => {
     const handlePaste = (e: ClipboardEvent) => {
@@ -62,44 +99,7 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
 
     document.addEventListener('paste', handlePaste)
     return () => document.removeEventListener('paste', handlePaste)
-  }, [])
-
-  const validateFile = (file: File): { valid: boolean; error?: string } => {
-    // Check file size
-    if (file.size > MAX_FILE_SIZE) {
-      return { valid: false, error: 'File too large (max 50MB)' }
-    }
-
-    // Check file type by extension for flexibility
-    const ext = file.name.split('.').pop()?.toLowerCase()
-    const validExts = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'csv', 'xls', 'xlsx', 'doc', 'docx', 'txt']
-    
-    if (ext && validExts.includes(ext)) {
-      return { valid: true }
-    }
-
-    // Check MIME type
-    if (ACCEPTED_TYPES[file.type as keyof typeof ACCEPTED_TYPES]) {
-      return { valid: true }
-    }
-
-    return { valid: false, error: 'Unsupported file type' }
-  }
-
-  const addFiles = (newFiles: File[]) => {
-    const validatedFiles = newFiles.map(file => {
-      const validation = validateFile(file)
-      const fileWithStatus = file as FileWithStatus
-      if (!validation.valid) {
-        fileWithStatus.status = 'error'
-        fileWithStatus.error = validation.error
-      } else {
-        fileWithStatus.status = 'pending'
-      }
-      return fileWithStatus
-    })
-    setFiles(prev => [...prev, ...validatedFiles])
-  }
+  }, [addFiles])
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -116,7 +116,7 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
     setIsDragging(false)
     const droppedFiles = Array.from(e.dataTransfer.files)
     addFiles(droppedFiles)
-  }, [])
+  }, [addFiles])
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -158,6 +158,7 @@ export default function FileUpload({ onUpload, onUploadComplete }: Props) {
         }
       }, 1500)
     } catch (err) {
+      console.error('Upload error:', err)
       setFiles(prev => prev.map(f => 
         f.status === 'uploading' ? { ...f, status: 'error' as const, error: 'Upload failed' } : f
       ))
