@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Task } from '../types'
-import { X, MessageSquare, RefreshCw } from 'lucide-react'
+import { X, MessageSquare, RefreshCw, Paperclip, FileText, Image, Trash2, Upload } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 import './TaskModal.css'
+
+interface TaskAttachment {
+  name: string
+  url: string
+  type: string
+  size: number
+}
 
 interface Props {
   task: Task | null
@@ -11,12 +19,17 @@ interface Props {
   onAddUpdate?: (taskId: string, updateText: string) => void
 }
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB for task attachments
+
 export default function TaskModal({ task, onSave, onDelete, onClose, onAddUpdate }: Props) {
   const [title, setTitle] = useState('')
   const [notes, setNotes] = useState('')
   const [priority, setPriority] = useState<Task['priority']>('normal')
   const [status, setStatus] = useState<Task['status']>('inbox')
   const [replyText, setReplyText] = useState('')
+  const [attachments, setAttachments] = useState<TaskAttachment[]>([])
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (task) {
@@ -24,22 +37,98 @@ export default function TaskModal({ task, onSave, onDelete, onClose, onAddUpdate
       setNotes(task.notes || '')
       setPriority(task.priority)
       setStatus(task.status)
+      // Load attachments from task if they exist
+      setAttachments((task as any).attachments || [])
     } else {
       setTitle('')
       setNotes('')
       setPriority('normal')
       setStatus('inbox')
+      setAttachments([])
     }
   }, [task])
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    
+    setIsUploading(true)
+    const uploadedAttachments: TaskAttachment[] = []
+    
+    for (const file of Array.from(files)) {
+      if (file.size > MAX_FILE_SIZE) {
+        alert(`${file.name} is too large (max 10MB)`)
+        continue
+      }
+      
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+      const fileName = `task-attachments/${Date.now()}-${safeName}`
+      
+      const { data, error } = await supabase.storage
+        .from('uploads')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+      
+      if (error) {
+        console.error('Upload error:', error)
+        continue
+      }
+      
+      if (data) {
+        const { data: urlData } = supabase.storage
+          .from('uploads')
+          .getPublicUrl(fileName)
+        
+        uploadedAttachments.push({
+          name: file.name,
+          url: urlData.publicUrl,
+          type: file.type || 'application/octet-stream',
+          size: file.size
+        })
+      }
+    }
+    
+    setAttachments(prev => [...prev, ...uploadedAttachments])
+    setIsUploading(false)
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  const removeAttachment = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+  }
+
+  const getFileIcon = (type: string) => {
+    if (type.startsWith('image/')) return <Image size={16} />
+    return <FileText size={16} />
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim()) return
 
+    const taskData: Partial<Task> & { attachments?: TaskAttachment[] } = {
+      title,
+      notes,
+      priority,
+      attachments: attachments.length > 0 ? attachments : undefined
+    }
+
     if (task) {
-      onSave({ ...task, title, notes, priority, status })
+      onSave({ ...task, ...taskData, status })
     } else {
-      onSave({ title, notes, priority })
+      onSave(taskData)
     }
   }
 
@@ -76,6 +165,57 @@ export default function TaskModal({ task, onSave, onDelete, onClose, onAddUpdate
               placeholder="Any additional details, context, or links..."
               rows={4}
             />
+          </div>
+
+          {/* Attachments Section */}
+          <div className="form-group attachments-section">
+            <label>
+              <Paperclip size={14} />
+              Attachments
+            </label>
+            
+            <div className="attachment-list">
+              {attachments.map((attachment, idx) => (
+                <div key={idx} className="attachment-item">
+                  {getFileIcon(attachment.type)}
+                  <a href={attachment.url} target="_blank" rel="noopener noreferrer" className="attachment-name">
+                    {attachment.name}
+                  </a>
+                  <span className="attachment-size">{formatFileSize(attachment.size)}</span>
+                  <button 
+                    type="button" 
+                    className="remove-attachment"
+                    onClick={() => removeAttachment(idx)}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            
+            <div className="attachment-upload">
+              <input
+                ref={fileInputRef}
+                type="file"
+                onChange={handleFileSelect}
+                multiple
+                className="file-input-hidden"
+                id="task-file-input"
+              />
+              <label htmlFor="task-file-input" className={`upload-btn-inline ${isUploading ? 'uploading' : ''}`}>
+                {isUploading ? (
+                  <>
+                    <RefreshCw size={14} className="spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload size={14} />
+                    Add Files
+                  </>
+                )}
+              </label>
+            </div>
           </div>
 
           <div className="form-row">

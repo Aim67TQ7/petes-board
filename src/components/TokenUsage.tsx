@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Coins, TrendingUp, TrendingDown, RefreshCw, User, Bot } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import { Coins, TrendingUp, TrendingDown, RefreshCw, User, Bot, Clock, Calendar, BarChart3 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import './TokenUsage.css'
 
@@ -24,35 +24,67 @@ interface UsageSummary {
   agent: string
 }
 
+interface TimeAggregation {
+  period: string
+  total_in: number
+  total_out: number
+  count: number
+}
+
+type AgentFilter = 'all' | 'pete' | 'drew'
+type TimeView = 'hour' | 'day' | 'month'
+
 export default function TokenUsage() {
   const [records, setRecords] = useState<UsageRecord[]>([])
-  const [summary, setSummary] = useState<UsageSummary[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'pete' | 'drew'>('all')
+  const [filter, setFilter] = useState<AgentFilter>('all')
+  const [timeView, setTimeView] = useState<TimeView>('day')
+  const [autoRefresh, setAutoRefresh] = useState(true)
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
 
   useEffect(() => {
     fetchUsage()
-  }, [])
+    
+    // Auto-refresh every 30 seconds when enabled
+    if (autoRefresh) {
+      const interval = setInterval(() => {
+        fetchUsage()
+      }, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [autoRefresh])
 
   const fetchUsage = async () => {
     setLoading(true)
+    
+    // Fetch more records for time-based analysis
     const { data, error } = await supabase
       .from('token_usage')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(100)
+      .limit(500)
 
     if (!error && data) {
       setRecords(data)
-      calculateSummary(data)
+      setLastRefresh(new Date())
     }
     setLoading(false)
   }
 
-  const calculateSummary = (data: UsageRecord[]) => {
+  // Filter records by agent
+  const filteredRecords = useMemo(() => {
+    return records.filter(r => {
+      if (filter === 'all') return true
+      const agent = r.agent || (r.model?.includes('drew') ? 'drew' : 'pete')
+      return agent === filter
+    })
+  }, [records, filter])
+
+  // Calculate summary by model
+  const summary = useMemo(() => {
     const grouped: Record<string, UsageSummary> = {}
     
-    data.forEach(record => {
+    filteredRecords.forEach(record => {
       const agent = record.agent || (record.model?.includes('drew') ? 'drew' : 'pete')
       const key = `${record.provider}-${record.model}-${agent}`
       
@@ -71,10 +103,56 @@ export default function TokenUsage() {
       grouped[key].count++
     })
 
-    setSummary(Object.values(grouped).sort((a, b) => 
+    return Object.values(grouped).sort((a, b) => 
       (b.total_in + b.total_out) - (a.total_in + a.total_out)
-    ))
-  }
+    )
+  }, [filteredRecords])
+
+  // Calculate time-based aggregation
+  const timeAggregation = useMemo(() => {
+    const grouped: Record<string, TimeAggregation> = {}
+    
+    filteredRecords.forEach(record => {
+      const date = new Date(record.created_at)
+      let periodKey: string
+      
+      switch (timeView) {
+        case 'hour':
+          periodKey = `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${date.getHours()}:00`
+          break
+        case 'day':
+          periodKey = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
+          break
+        case 'month':
+          periodKey = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+          break
+      }
+      
+      if (!grouped[periodKey]) {
+        grouped[periodKey] = {
+          period: periodKey,
+          total_in: 0,
+          total_out: 0,
+          count: 0
+        }
+      }
+      grouped[periodKey].total_in += record.tokens_in || 0
+      grouped[periodKey].total_out += record.tokens_out || 0
+      grouped[periodKey].count++
+    })
+
+    // Sort by date (most recent first for display, but we need to parse dates)
+    return Object.values(grouped).slice(0, 24) // Limit to recent periods
+  }, [filteredRecords, timeView])
+
+  // Calculate max for bar chart scaling
+  const maxTokens = useMemo(() => {
+    if (timeAggregation.length === 0) return 1
+    return Math.max(...timeAggregation.map(t => t.total_in + t.total_out))
+  }, [timeAggregation])
+
+  const totalIn = summary.reduce((sum, s) => sum + s.total_in, 0)
+  const totalOut = summary.reduce((sum, s) => sum + s.total_out, 0)
 
   const formatNumber = (n: number) => {
     if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
@@ -92,21 +170,7 @@ export default function TokenUsage() {
     })
   }
 
-  const filteredRecords = records.filter(r => {
-    if (filter === 'all') return true
-    const agent = r.agent || (r.model?.includes('drew') ? 'drew' : 'pete')
-    return agent === filter
-  })
-
-  const filteredSummary = summary.filter(s => {
-    if (filter === 'all') return true
-    return s.agent === filter
-  })
-
-  const totalIn = filteredSummary.reduce((sum, s) => sum + s.total_in, 0)
-  const totalOut = filteredSummary.reduce((sum, s) => sum + s.total_out, 0)
-
-  if (loading) {
+  if (loading && records.length === 0) {
     return (
       <div className="token-usage loading">
         <RefreshCw className="spin" size={32} />
@@ -143,11 +207,25 @@ export default function TokenUsage() {
               <Bot size={14} /> Drew
             </button>
           </div>
-          <button className="refresh-btn" onClick={fetchUsage}>
-            <RefreshCw size={16} />
-          </button>
+          <div className="refresh-controls">
+            <button 
+              className={`auto-refresh-btn ${autoRefresh ? 'active' : ''}`}
+              onClick={() => setAutoRefresh(!autoRefresh)}
+              title={autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
+            >
+              <RefreshCw size={14} className={loading ? 'spin' : ''} />
+              {autoRefresh ? 'Auto' : 'Manual'}
+            </button>
+            <button className="refresh-btn" onClick={fetchUsage} disabled={loading}>
+              <RefreshCw size={16} className={loading ? 'spin' : ''} />
+            </button>
+          </div>
         </div>
       </header>
+
+      <div className="last-refresh">
+        Last updated: {lastRefresh.toLocaleTimeString()}
+      </div>
 
       <div className="usage-totals">
         <div className="total-card">
@@ -173,10 +251,68 @@ export default function TokenUsage() {
         </div>
       </div>
 
+      {/* Time-Based View */}
+      <div className="time-usage">
+        <div className="time-header">
+          <h2><BarChart3 size={18} /> Usage Over Time</h2>
+          <div className="time-tabs">
+            <button 
+              className={timeView === 'hour' ? 'active' : ''} 
+              onClick={() => setTimeView('hour')}
+            >
+              <Clock size={14} /> Hour
+            </button>
+            <button 
+              className={timeView === 'day' ? 'active' : ''} 
+              onClick={() => setTimeView('day')}
+            >
+              <Calendar size={14} /> Day
+            </button>
+            <button 
+              className={timeView === 'month' ? 'active' : ''} 
+              onClick={() => setTimeView('month')}
+            >
+              <Calendar size={14} /> Month
+            </button>
+          </div>
+        </div>
+        
+        {timeAggregation.length === 0 ? (
+          <div className="no-data">No data for the selected period</div>
+        ) : (
+          <div className="time-chart">
+            {timeAggregation.map((period, idx) => {
+              const total = period.total_in + period.total_out
+              const widthPercent = (total / maxTokens) * 100
+              const inPercent = total > 0 ? (period.total_in / total) * 100 : 50
+              
+              return (
+                <div key={idx} className="time-bar-row">
+                  <div className="time-label">{period.period}</div>
+                  <div className="time-bar-container">
+                    <div className="time-bar" style={{ width: `${Math.max(5, widthPercent)}%` }}>
+                      <div className="time-bar-in" style={{ width: `${inPercent}%` }} />
+                      <div className="time-bar-out" style={{ width: `${100 - inPercent}%` }} />
+                    </div>
+                    <span className="time-bar-value">{formatNumber(total)}</span>
+                  </div>
+                  <div className="time-count">{period.count} calls</div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+        
+        <div className="time-legend">
+          <span className="legend-item"><span className="legend-dot input"></span> Input</span>
+          <span className="legend-item"><span className="legend-dot output"></span> Output</span>
+        </div>
+      </div>
+
       <div className="usage-summary">
         <h2>By Model</h2>
         <div className="summary-grid">
-          {filteredSummary.map((s, i) => (
+          {summary.map((s, i) => (
             <div key={i} className={`summary-card ${s.agent}`}>
               <div className="model-info">
                 <span className="provider">{s.provider}</span>
@@ -220,7 +356,7 @@ export default function TokenUsage() {
               </tr>
             </thead>
             <tbody>
-              {filteredRecords.map(record => {
+              {filteredRecords.slice(0, 50).map(record => {
                 const agent = record.agent || (record.model?.includes('drew') ? 'drew' : 'pete')
                 return (
                   <tr key={record.id} className={agent}>

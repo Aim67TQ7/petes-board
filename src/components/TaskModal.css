@@ -262,3 +262,105 @@
   color: var(--text);
   border-color: var(--text-muted);
 }
+
+/* Attachments Section */
+.attachments-section label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.attachment-list {
+  margin-bottom: 0.75rem;
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg);
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.attachment-item svg:first-child {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.attachment-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.attachment-name:hover {
+  text-decoration: underline;
+}
+
+.attachment-size {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.remove-attachment {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  transition: color 0.2s;
+}
+
+.remove-attachment:hover {
+  color: var(--danger);
+}
+
+.attachment-upload {
+  margin-top: 0.5rem;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.upload-btn-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-btn-inline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.upload-btn-inline.uploading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.upload-btn-inline .spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

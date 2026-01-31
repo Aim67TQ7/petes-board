@@ -4,7 +4,7 @@ import type { Task, Message } from './types'
 import KanbanBoard from './components/KanbanBoard'
 import ChatPanel from './components/ChatPanel'
 import ChatArchive from './components/ChatArchive'
-import FileUpload from './components/FileUpload'
+import ParkingLot from './components/ParkingLot'
 import TaskModal from './components/TaskModal'
 import PasscodeGate from './components/PasscodeGate'
 import Downloads from './components/Downloads'
@@ -13,10 +13,11 @@ import CronJobs from './components/CronJobs'
 import ActivityLog from './components/ActivityLog'
 import VoiceBriefings from './components/VoiceBriefings'
 import TokenUsage from './components/TokenUsage'
-import { Kanban, MessageSquare, Upload, Radio, FolderDown, Archive, Newspaper, Clock, Activity, Mic, BarChart3 } from 'lucide-react'
+import ROIDashboard from './components/ROIDashboard'
+import { Kanban, MessageSquare, ParkingSquare, Radio, FolderDown, Archive, Newspaper, Clock, Activity, Mic, BarChart3, TrendingUp } from 'lucide-react'
 import './App.css'
 
-type View = 'board' | 'chat' | 'files' | 'downloads' | 'archive' | 'news' | 'cron' | 'activity' | 'voice' | 'tokens'
+type View = 'board' | 'chat' | 'parking' | 'downloads' | 'archive' | 'news' | 'cron' | 'activity' | 'voice' | 'tokens' | 'roi'
 
 function App() {
   const [isUnlocked, setIsUnlocked] = useState(() => {
@@ -97,7 +98,8 @@ function App() {
       notes: task.notes || '',
       status: 'inbox',
       priority: task.priority || 'normal',
-      updates: []
+      updates: [],
+      attachments: (task as any).attachments || null
     }])
     if (!error) setShowTaskModal(false)
   }
@@ -110,7 +112,8 @@ function App() {
         title: task.title,
         notes: task.notes,
         status: task.status,
-        priority: task.priority
+        priority: task.priority,
+        attachments: (task as any).attachments || null
       })
       .eq('id', editingTask.id)
     if (!error) {
@@ -267,11 +270,11 @@ function App() {
             <span>Chat Archives</span>
           </button>
           <button 
-            className={`nav-item ${activeView === 'files' ? 'active' : ''}`}
-            onClick={() => setActiveView('files')}
+            className={`nav-item ${activeView === 'parking' ? 'active' : ''}`}
+            onClick={() => setActiveView('parking')}
           >
-            <Upload size={20} />
-            <span>Files</span>
+            <ParkingSquare size={20} />
+            <span>Parking Lot</span>
           </button>
           <button 
             className={`nav-item ${activeView === 'downloads' ? 'active' : ''}`}
@@ -315,6 +318,13 @@ function App() {
             <BarChart3 size={20} />
             <span>Token Usage</span>
           </button>
+          <button 
+            className={`nav-item ${activeView === 'roi' ? 'active' : ''}`}
+            onClick={() => setActiveView('roi')}
+          >
+            <TrendingUp size={20} />
+            <span>ROI Dashboard</span>
+          </button>
         </div>
 
         <div className="sidebar-footer">
@@ -344,8 +354,8 @@ function App() {
         {activeView === 'archive' && (
           <ChatArchive />
         )}
-        {activeView === 'files' && (
-          <FileUpload 
+        {activeView === 'parking' && (
+          <ParkingLot 
             onUpload={handleSendMessage} 
             onUploadComplete={() => setActiveView('board')}
           />
@@ -367,6 +377,9 @@ function App() {
         )}
         {activeView === 'tokens' && (
           <TokenUsage />
+        )}
+        {activeView === 'roi' && (
+          <ROIDashboard />
         )}
       </main>
 

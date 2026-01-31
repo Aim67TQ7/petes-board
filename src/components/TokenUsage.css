@@ -28,7 +28,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   flex-wrap: wrap;
   gap: 1rem;
 }
@@ -81,6 +81,36 @@
   color: white;
 }
 
+.refresh-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auto-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.auto-refresh-btn:hover {
+  background: var(--bg-secondary);
+}
+
+.auto-refresh-btn.active {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
 .refresh-btn {
   padding: 0.5rem;
   border: none;
@@ -94,6 +124,17 @@
 .refresh-btn:hover {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.last-refresh {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
 }
 
 /* Totals */
@@ -137,6 +178,179 @@
   display: block;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+/* Time-Based Usage */
+.time-usage {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.time-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.time-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.time-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--bg-tertiary);
+  padding: 0.2rem;
+  border-radius: 6px;
+}
+
+.time-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.time-tabs button:hover {
+  background: var(--bg-secondary);
+}
+
+.time-tabs button.active {
+  background: var(--accent);
+  color: white;
+}
+
+.time-chart {
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-tertiary);
+}
+
+.time-chart::-webkit-scrollbar {
+  width: 6px;
+}
+
+.time-chart::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+.time-chart::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.time-bar-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 80px;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.time-bar-row:last-child {
+  border-bottom: none;
+}
+
+.time-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.time-bar {
+  height: 20px;
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.time-bar-in {
+  background: #3b82f6;
+  height: 100%;
+}
+
+.time-bar-out {
+  background: #10b981;
+  height: 100%;
+}
+
+.time-bar-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.time-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.time-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.legend-dot.input {
+  background: #3b82f6;
+}
+
+.legend-dot.output {
+  background: #10b981;
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 /* Summary */
@@ -322,6 +536,15 @@
   .filter-tabs button {
     padding: 0.4rem 0.75rem;
     font-size: 0.8rem;
+  }
+
+  .time-bar-row {
+    grid-template-columns: 80px 1fr 60px;
+    gap: 0.5rem;
+  }
+
+  .time-label {
+    font-size: 0.7rem;
   }
 
   .history-scroll {

@@ -1,0 +1,367 @@
+.roi-dashboard {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.roi-dashboard.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.roi-dashboard .spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.roi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-title svg {
+  color: var(--accent);
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.timeframe-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--bg-secondary);
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.timeframe-tabs button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.timeframe-tabs button:hover {
+  background: var(--bg-tertiary);
+}
+
+.timeframe-tabs button.active {
+  background: var(--accent);
+  color: white;
+}
+
+.refresh-btn {
+  padding: 0.5rem;
+  border: none;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.metric-card.highlight {
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.15), rgba(16, 185, 129, 0.1));
+  border-color: var(--accent);
+}
+
+.metric-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  color: var(--accent);
+}
+
+.metric-card.highlight .metric-icon {
+  background: var(--accent);
+  color: white;
+}
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.metric-value.positive {
+  color: var(--success);
+}
+
+.metric-value.negative {
+  color: var(--danger);
+}
+
+/* Breakdown Section */
+.breakdown-section {
+  margin-bottom: 2rem;
+}
+
+.breakdown-section h2 {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.breakdown-card {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.breakdown-card.savings {
+  border-left: 3px solid var(--success);
+}
+
+.breakdown-card.costs {
+  border-left: 3px solid var(--danger);
+}
+
+.breakdown-card h3 {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.breakdown-row.highlight {
+  font-weight: 600;
+}
+
+.breakdown-row.total {
+  padding-top: 0.75rem;
+  border-top: 2px solid var(--border);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.breakdown-row.info {
+  color: var(--text-muted);
+}
+
+.breakdown-row .positive {
+  color: var(--success);
+}
+
+.breakdown-row .negative {
+  color: var(--danger);
+}
+
+/* Chart Section */
+.chart-section {
+  margin-bottom: 2rem;
+}
+
+.chart-section h2 {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.bar-chart {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.bar-container {
+  margin-bottom: 1rem;
+}
+
+.bar-container:last-child {
+  margin-bottom: 0;
+}
+
+.bar-container.net {
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border);
+}
+
+.bar-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.bar-track {
+  height: 36px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+  border-radius: 8px;
+  min-width: fit-content;
+  transition: width 0.5s ease;
+}
+
+.bar-fill.positive {
+  background: linear-gradient(90deg, var(--success), #34d399);
+}
+
+.bar-fill.negative {
+  background: linear-gradient(90deg, var(--danger), #f87171);
+}
+
+/* Assumptions Note */
+.assumptions-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.assumptions-note svg {
+  color: var(--warning);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.assumptions-note p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.assumptions-note strong {
+  color: var(--text);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .roi-dashboard {
+    padding: 1rem;
+  }
+
+  .roi-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timeframe-tabs button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .metric-card {
+    padding: 1rem;
+  }
+
+  .metric-value {
+    font-size: 1.25rem;
+  }
+
+  .metric-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .metric-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+}
