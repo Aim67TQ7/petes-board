@@ -283,12 +283,13 @@ function App() {
 
   return (
     <div className="app">
-      <nav className="sidebar">
+      <nav className="sidebar" role="navigation" aria-label="Main navigation">
         <div className="logo">
           <button 
             className="refresh-icon" 
             onClick={() => window.location.reload()}
             title="Refresh page"
+            aria-label="Refresh page"
           >
             <Radio size={24} className={isConnected ? 'connected' : ''} />
           </button>
@@ -301,6 +302,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'board' ? 'active' : ''}`}
               onClick={() => setActiveView('board')}
+              aria-label="Board"
+              aria-current={activeView === 'board' ? 'page' : undefined}
             >
               <Kanban size={20} />
               <span>Board</span>
@@ -308,6 +311,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'parking' ? 'active' : ''}`}
               onClick={() => setActiveView('parking')}
+              aria-label="Parking Lot"
+              aria-current={activeView === 'parking' ? 'page' : undefined}
             >
               <ParkingSquare size={20} />
               <span>Parking Lot</span>
@@ -319,6 +324,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'chat' ? 'active' : ''}`}
               onClick={() => setActiveView('chat')}
+              aria-label="Chat"
+              aria-current={activeView === 'chat' ? 'page' : undefined}
             >
               <MessageSquare size={20} />
               <span>Chat</span>
@@ -326,6 +333,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'archive' ? 'active' : ''}`}
               onClick={() => setActiveView('archive')}
+              aria-label="Archives"
+              aria-current={activeView === 'archive' ? 'page' : undefined}
             >
               <Archive size={20} />
               <span>Archives</span>
@@ -333,6 +342,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'voice' ? 'active' : ''}`}
               onClick={() => setActiveView('voice')}
+              aria-label="Voice Briefings"
+              aria-current={activeView === 'voice' ? 'page' : undefined}
             >
               <Mic size={20} />
               <span>Voice Briefings</span>
@@ -344,6 +355,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'downloads' ? 'active' : ''}`}
               onClick={() => setActiveView('downloads')}
+              aria-label="Downloads"
+              aria-current={activeView === 'downloads' ? 'page' : undefined}
             >
               <FolderDown size={20} />
               <span>Downloads</span>
@@ -351,6 +364,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'news' ? 'active' : ''}`}
               onClick={() => setActiveView('news')}
+              aria-label="News"
+              aria-current={activeView === 'news' ? 'page' : undefined}
             >
               <Newspaper size={20} />
               <span>News</span>
@@ -362,6 +377,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'activity' ? 'active' : ''}`}
               onClick={() => setActiveView('activity')}
+              aria-label="Activity"
+              aria-current={activeView === 'activity' ? 'page' : undefined}
             >
               <Activity size={20} />
               <span>Activity</span>
@@ -369,6 +386,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'cron' ? 'active' : ''}`}
               onClick={() => setActiveView('cron')}
+              aria-label="Cron Jobs"
+              aria-current={activeView === 'cron' ? 'page' : undefined}
             >
               <Clock size={20} />
               <span>Cron Jobs</span>
@@ -380,6 +399,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'tokens' ? 'active' : ''}`}
               onClick={() => setActiveView('tokens')}
+              aria-label="Usage"
+              aria-current={activeView === 'tokens' ? 'page' : undefined}
             >
               <BarChart3 size={20} />
               <span>Usage</span>
@@ -387,6 +408,8 @@ function App() {
             <button 
               className={`nav-item ${activeView === 'roi' ? 'active' : ''}`}
               onClick={() => setActiveView('roi')}
+              aria-label="ROI"
+              aria-current={activeView === 'roi' ? 'page' : undefined}
             >
               <TrendingUp size={20} />
               <span>ROI</span>
@@ -395,8 +418,12 @@ function App() {
         </div>
 
         <div className="sidebar-footer">
-          <button className="btn-primary" onClick={() => setShowTaskModal(true)}>
-            + New Task
+          <button 
+            className="btn-primary" 
+            onClick={openCreateTask}
+            aria-label="Create new task"
+          >
+            + <span>New Task</span>
           </button>
         </div>
       </nav>

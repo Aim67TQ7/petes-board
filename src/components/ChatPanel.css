@@ -101,13 +101,14 @@
   border-radius: var(--radius-lg);
   padding: 1.125rem 1.375rem;
   border: 1.5px solid var(--border);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  will-change: transform;
 }
 
 .message-content:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .message.user .message-content {
@@ -427,21 +428,22 @@
   font-size: 0.975rem;
   line-height: 1.5;
   resize: none;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
   max-height: 150px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  will-change: box-shadow, transform;
 }
 
 .chat-input::placeholder {
   color: var(--text-muted);
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 .chat-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .send-btn {

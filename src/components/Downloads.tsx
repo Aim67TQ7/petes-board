@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FileText, Download, ExternalLink, FileSpreadsheet, BarChart3, Image, File, Loader2, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react'
+import { FileText, Download, ExternalLink, FileSpreadsheet, BarChart3, Image, File, ChevronDown, ChevronUp, RefreshCw, Calendar } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import './Downloads.css'
 
@@ -123,72 +123,39 @@ export default function Downloads() {
       .join(' ')
   }
 
+  const toggleExpand = (fileId: string) => {
+    setExpandedId(expandedId === fileId ? null : fileId)
+  }
+
   if (loading) {
     return (
       <div className="downloads-page compact">
         <div className="downloads-header">
           <Download size={20} />
           <h2>Downloads</h2>
-          <span className="file-count">Loading...</span>
         </div>
-        <div className="downloads-loading">
-          <Loader2 className="spin" size={32} />
-          <span>Loading files...</span>
-        </div>
+        <div className="loading">Loading files...</div>
       </div>
     )
-  }
-
-  if (error) {
-    return (
-      <div className="downloads-page compact">
-        <header className="page-header">
-          <div>
-            <h1>Downloads</h1>
-            <p>Error loading files</p>
-          </div>
-        </header>
-        <div className="page-content">
-          <div className="error-box">
-            <p>Error loading files: {error}</p>
-          </div>
-          <button className="btn-primary" onClick={fetchFiles}>
-            <RefreshCw size={16} />
-            Retry
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  const toggleExpand = (fileId: string) => {
-    setExpandedId(expandedId === fileId ? null : fileId)
   }
 
   return (
     <div className="downloads-page compact">
-      <header className="page-header">
-        <div>
-          <h1>Downloads</h1>
-          <p>{files.length} file{files.length !== 1 ? 's' : ''} available</p>
-        </div>
-        <div className="page-header-actions">
-          <button className="btn-secondary btn-sm" onClick={fetchFiles} title="Refresh files">
-            <RefreshCw size={16} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </header>
+      <div className="downloads-header">
+        <Download size={20} />
+        <h2>Downloads</h2>
+        <span className="file-count">{files.length}</span>
+        <button className="refresh-btn" onClick={fetchFiles} title="Refresh">
+          <RefreshCw size={16} />
+        </button>
+      </div>
 
-      <div className="page-content">
-        {files.length === 0 ? (
-          <div className="empty-state-container">
-            <Download size={64} />
-            <h3>No files yet</h3>
-            <p>Files uploaded by Pete will appear here</p>
-          </div>
-        ) : (
-          <div className="downloads-list-compact">
+      {error && <div className="error-msg">{error}</div>}
+
+      {files.length === 0 ? (
+        <div className="no-files">No files available yet.</div>
+      ) : (
+        <div className="downloads-list compact">
           {files.map((file) => {
             const fileId = file.id || file.name
             const isExpanded = expandedId === fileId
@@ -196,30 +163,42 @@ export default function Downloads() {
             return (
               <div key={fileId} className={`download-row ${isExpanded ? 'expanded' : ''}`}>
                 <div className="download-summary" onClick={() => toggleExpand(fileId)}>
-                  <div className="download-icon-compact">
+                  <div className="download-icon">
                     {getIcon(file.name, file.metadata?.mimetype)}
                   </div>
                   <span className="download-name">{getDisplayName(file.name)}</span>
                   <span className="download-size-badge">{formatSize(file.metadata?.size || 0)}</span>
                   <span className="expand-icon">
-                    {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                   </span>
                 </div>
                 
                 {isExpanded && (
                   <div className="download-details">
-                    <div className="detail-row">
-                      <span className="detail-label">Filename:</span>
-                      <span className="detail-value">{file.name}</span>
+                    <div className="detail-grid">
+                      <div className="detail-item">
+                        <span className="detail-label">Filename</span>
+                        <div className="detail-value">
+                          <File size={14} />
+                          <span>{file.name}</span>
+                        </div>
+                      </div>
+                      <div className="detail-item">
+                        <span className="detail-label">Uploaded</span>
+                        <div className="detail-value">
+                          <Calendar size={14} />
+                          <span>{formatDate(file.created_at)}</span>
+                        </div>
+                      </div>
+                      <div className="detail-item">
+                        <span className="detail-label">Size</span>
+                        <div className="detail-value">
+                          <FileText size={14} />
+                          <span>{formatSize(file.metadata?.size || 0)}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Uploaded:</span>
-                      <span className="detail-value">{formatDate(file.created_at)}</span>
-                    </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Size:</span>
-                      <span className="detail-value">{formatSize(file.metadata?.size || 0)}</span>
-                    </div>
+                    
                     <div className="download-actions">
                       <a 
                         href={getUrl(file.name)} 
@@ -228,7 +207,7 @@ export default function Downloads() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Download size={14} />
-                        <span>Download</span>
+                        Download
                       </a>
                       <a 
                         href={getUrl(file.name)} 
@@ -238,7 +217,7 @@ export default function Downloads() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ExternalLink size={14} />
-                        <span>View</span>
+                        View
                       </a>
                     </div>
                   </div>
@@ -246,13 +225,12 @@ export default function Downloads() {
               </div>
             )
           })}
-          </div>
-        )}
+        </div>
+      )}
 
-        <p className="footer-note">
-          Files uploaded to Pete's Board storage · Click to expand details
-        </p>
-      </div>
+      <p className="footer-note">
+        Files uploaded to Pete's Board storage · Click to expand details
+      </p>
     </div>
   )
 }

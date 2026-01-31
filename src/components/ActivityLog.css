@@ -1,16 +1,12 @@
 @import './SharedCompact.css';
 
-.activity-log {
+.activity-log.compact {
   padding: 12px;
   max-width: 800px;
   margin: 0 auto;
 }
 
-.activity-log.compact {
-  padding: 12px;
-}
-
-/* Header - Standardized */
+/* Standardized Header */
 .activity-header {
   display: flex;
   align-items: center;
@@ -24,7 +20,7 @@
   font-size: 1.1rem;
 }
 
-.activity-header svg {
+.activity-header svg:first-child {
   color: var(--primary);
 }
 
@@ -52,76 +48,72 @@
   color: var(--text);
 }
 
-/* Stats Compact */
+/* Stats Row - Compact */
 .stats-compact {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
 .stat-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
+  gap: 6px;
   padding: 4px 10px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
 .stat-badge.today {
-  color: var(--primary);
-  border-color: var(--primary);
-  background: rgba(59, 130, 246, 0.05);
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+}
+
+.stat-badge svg {
+  flex-shrink: 0;
 }
 
 /* Filter Tabs */
 .filter-tabs-compact {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
 .filter-tab {
   padding: 6px 12px;
-  border: 1px solid var(--border);
   background: var(--surface);
-  color: var(--text-muted);
+  border: 1px solid var(--border);
   border-radius: 6px;
-  cursor: pointer;
   font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
   transition: all 0.2s;
   text-transform: capitalize;
 }
 
 .filter-tab:hover {
-  background: var(--background);
+  background: var(--border);
 }
 
 .filter-tab.active {
   background: var(--primary);
-  border-color: var(--primary);
   color: white;
+  border-color: var(--primary);
 }
 
-/* Loading & Empty States */
-.loading, .no-logs {
-  text-align: center;
-  padding: 24px 16px;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-/* Logs List */
+/* Logs List - Compact Pattern */
 .logs-list.compact {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-height: calc(100vh - 280px);
+  max-height: calc(100vh - 240px);
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -139,7 +131,7 @@
   border-radius: 2px;
 }
 
-/* Log Row */
+/* Log Row - Following CronJobs Pattern */
 .log-row {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -171,13 +163,13 @@
 }
 
 .log-icon-compact {
-  width: 24px;
-  height: 24px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
-  flex-shrink: 0;
 }
 
 .log-action-text {
@@ -198,24 +190,30 @@
   white-space: nowrap;
 }
 
-.expand-icon {
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-/* Log Details */
+/* Log Details - Expanded View */
 .log-details-expanded {
   padding: 12px 16px;
   border-top: 1px solid var(--border);
   background: var(--background);
-  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
   color: var(--text-muted);
-  font-family: 'Monaco', 'Courier New', monospace;
   white-space: pre-wrap;
   word-break: break-word;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
-/* Footer Note */
+/* Loading & Empty States */
+.loading,
+.no-logs {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Footer */
 .footer-note {
   text-align: center;
   font-size: 0.75rem;
@@ -234,16 +232,11 @@
     padding: 8px 10px;
   }
   
+  .log-time-badge {
+    display: none;
+  }
+  
   .log-action-text {
     font-size: 0.85rem;
-  }
-  
-  .stats-compact {
-    gap: 4px;
-  }
-  
-  .stat-badge {
-    font-size: 0.7rem;
-    padding: 3px 8px;
   }
 }

@@ -68,67 +68,64 @@ export default function LatestNews() {
 
   // Removed - now using ReactMarkdown
 
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section)
+  }
+
+  const sections = [
+    { id: 'world', title: 'Weather & World', icon: Globe, content: news?.world_news, color: '#3b82f6' },
+    { id: 'financial', title: 'Markets & Finance', icon: TrendingUp, content: news?.financial_news, color: '#10b981' },
+    { id: 'bitcoin', title: 'Bitcoin', icon: Bitcoin, content: news?.bitcoin_price, color: '#f59e0b' },
+    { id: 'sports', title: 'Sports & Kansas', icon: Activity, content: news?.superbowl, color: '#8b5cf6' }
+  ]
+
   if (loading) {
     return (
-      <div className="latest-news">
-        <header className="page-header">
-          <h1>Latest News</h1>
-        </header>
-        <div className="page-content">
-          <div className="loading-container">
-            <div className="spinner"></div>
-            <p>Loading news brief...</p>
-          </div>
+      <div className="latest-news compact">
+        <div className="news-header">
+          <Newspaper size={20} />
+          <h2>Latest News</h2>
         </div>
+        <div className="loading">Loading news brief...</div>
       </div>
     )
   }
 
   if (!news) {
     return (
-      <div className="latest-news">
-        <header className="page-header">
-          <h1>Latest News</h1>
-        </header>
-        <div className="page-content">
-          <div className="empty-state-container">
-            <Newspaper size={64} />
-            <h3>No news briefs yet</h3>
-            <p>Daily briefings are generated at 4:00 AM CDT.</p>
-          </div>
+      <div className="latest-news compact">
+        <div className="news-header">
+          <Newspaper size={20} />
+          <h2>Latest News</h2>
+          <button className="refresh-btn" onClick={loadNews} title="Refresh">
+            <RefreshCw size={16} />
+          </button>
+        </div>
+        <div className="no-news">
+          <Newspaper size={64} />
+          <h3>No news briefs yet</h3>
+          <p>Daily briefings are generated at 4:00 AM CDT.</p>
         </div>
       </div>
     )
   }
 
-  const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? null : section)
-  }
-
-  const sections = [
-    { id: 'world', title: 'Weather & World', icon: Globe, content: news.world_news, color: '#3b82f6' },
-    { id: 'financial', title: 'Markets & Finance', icon: TrendingUp, content: news.financial_news, color: '#10b981' },
-    { id: 'bitcoin', title: 'Bitcoin', icon: Bitcoin, content: news.bitcoin_price, color: '#f59e0b' },
-    { id: 'sports', title: 'Sports & Kansas', icon: Activity, content: news.superbowl, color: '#8b5cf6' }
-  ]
-
   return (
     <div className="latest-news compact">
-      <header className="page-header">
-        <div>
-          <h1>Latest News</h1>
-          <p>Updated: {formatDate(news.created_at)}</p>
-        </div>
-        <div className="page-header-actions">
-          <button className="btn-secondary btn-sm" onClick={loadNews} title="Refresh news">
-            <RefreshCw size={16} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </header>
+      <div className="news-header">
+        <Newspaper size={20} />
+        <h2>Latest News</h2>
+        <span className="news-count">{sections.length}</span>
+        <button className="refresh-btn" onClick={loadNews} title="Refresh">
+          <RefreshCw size={16} />
+        </button>
+      </div>
 
-      <div className="page-content">
-        <div className="news-sections-compact">
+      <div className="news-subtitle">
+        Updated: {formatDate(news.created_at)}
+      </div>
+
+      <div className="news-sections compact">
         {sections.map(section => {
           const Icon = section.icon
           const isExpanded = expandedSection === section.id
@@ -141,24 +138,23 @@ export default function LatestNews() {
                 </div>
                 <span className="news-title">{section.title}</span>
                 <span className="expand-icon">
-                  {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </span>
               </div>
               
               {isExpanded && (
-                <div className="news-content-expanded">
+                <div className="news-details">
                   <ReactMarkdown>{section.content || `No ${section.title.toLowerCase()} available.`}</ReactMarkdown>
                 </div>
               )}
             </div>
           )
         })}
-        </div>
-
-        <p className="footer-note">
-          Daily briefings generated at 4:00 AM CDT · Real-time updates enabled
-        </p>
       </div>
+
+      <p className="footer-note">
+        Daily briefings generated at 4:00 AM CDT · Real-time updates enabled
+      </p>
     </div>
   )
 }

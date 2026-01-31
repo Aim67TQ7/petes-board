@@ -1,16 +1,12 @@
 @import './SharedCompact.css';
 
-.parking-lot {
+.parking-lot.compact {
   padding: 12px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.parking-lot.compact {
-  padding: 12px;
-}
-
-/* Header - Standardized */
+/* Standardized Header */
 .parking-header {
   display: flex;
   align-items: center;
@@ -24,7 +20,7 @@
   font-size: 1.1rem;
 }
 
-.parking-header svg {
+.parking-header svg:first-child {
   color: var(--primary);
 }
 
@@ -48,16 +44,17 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  min-height: calc(100vh - 200px);
+  max-height: calc(100vh - 180px);
 }
 
 @media (max-width: 900px) {
   .parking-split {
     grid-template-columns: 1fr;
+    max-height: none;
   }
 }
 
-/* Panel Styling */
+/* Panels */
 .dictation-panel,
 .tasks-panel {
   background: var(--surface);
@@ -66,23 +63,20 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .panel-header h2 {
-  font-size: 1rem;
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 1rem;
+  color: var(--text);
 }
 
 .task-count {
@@ -98,14 +92,15 @@
 .mic-btn {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px;
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: all 0.2s;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
 }
 
 .mic-btn:hover {
@@ -117,7 +112,7 @@
   background: #ef4444;
   border-color: #ef4444;
   color: white;
-  animation: pulse 2s infinite;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
@@ -128,16 +123,16 @@
 /* Rambling Input */
 .rambling-input {
   width: 100%;
-  min-height: 200px;
   padding: 12px;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--background);
   color: var(--text);
   font-size: 0.9rem;
-  font-family: inherit;
-  resize: vertical;
   line-height: 1.5;
+  resize: vertical;
+  min-height: 180px;
+  font-family: inherit;
 }
 
 .rambling-input:focus {
@@ -154,31 +149,32 @@
 .dictation-actions {
   display: flex;
   gap: 8px;
+  margin-top: 12px;
 }
 
 .extract-btn,
 .clear-btn {
+  flex: 1;
   padding: 8px 16px;
-  border: 1px solid var(--border);
   border-radius: 6px;
-  cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 
 .extract-btn {
   background: var(--primary);
-  border-color: var(--primary);
   color: white;
-  flex: 1;
+  border: 1px solid var(--primary);
 }
 
 .extract-btn:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--primary-dark);
 }
 
 .extract-btn:disabled {
@@ -188,12 +184,12 @@
 
 .clear-btn {
   background: var(--surface);
-  color: var(--text-muted);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
 .clear-btn:hover:not(:disabled) {
   background: var(--border);
-  color: var(--text);
 }
 
 .clear-btn:disabled {
@@ -212,39 +208,47 @@
 
 /* File Section */
 .file-section {
-  padding-top: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
   border-top: 1px solid var(--border);
 }
 
 .file-section h3 {
+  margin: 0 0 10px 0;
   font-size: 0.9rem;
-  margin: 0 0 12px 0;
-  color: var(--text-muted);
+  color: var(--text);
 }
 
 .mini-drop-zone {
   position: relative;
   border: 2px dashed var(--border);
-  border-radius: 8px;
-  padding: 24px;
+  border-radius: 6px;
+  padding: 20px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-muted);
+  background: var(--background);
 }
 
 .mini-drop-zone:hover {
   border-color: var(--primary);
-  background: var(--background);
+  background: rgba(59, 130, 246, 0.05);
 }
 
 .mini-drop-zone.dragging {
   border-color: var(--primary);
   background: rgba(59, 130, 246, 0.1);
+}
+
+.mini-drop-zone svg {
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.mini-drop-zone span {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
 .file-input {
@@ -257,25 +261,26 @@
   cursor: pointer;
 }
 
+/* Files Mini List */
 .files-mini-list {
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 6px;
 }
 
 .file-mini-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 8px;
   background: var(--background);
   border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 0.85rem;
 }
 
-.file-mini-item svg:first-child {
+.file-mini-item svg {
   color: var(--primary);
   flex-shrink: 0;
 }
@@ -285,11 +290,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--text);
 }
 
 .file-size {
   font-size: 0.75rem;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .file-mini-item.success {
@@ -302,11 +309,11 @@
   background: rgba(239, 68, 68, 0.05);
 }
 
-.success {
+.file-mini-item .success {
   color: #22c55e;
 }
 
-.error {
+.file-mini-item .error {
   color: #ef4444;
 }
 
@@ -316,37 +323,32 @@
   padding: 4px;
   cursor: pointer;
   color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
+  transition: color 0.2s;
 }
 
 .remove-file:hover {
-  background: var(--border);
-  color: var(--text);
+  color: #ef4444;
 }
 
 .upload-files-btn {
+  margin-top: 8px;
   padding: 8px 16px;
-  border: 1px solid var(--primary);
-  border-radius: 6px;
   background: var(--primary);
   color: white;
-  cursor: pointer;
+  border: 1px solid var(--primary);
+  border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 4px;
 }
 
 .upload-files-btn:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--primary-dark);
 }
 
 .upload-files-btn:disabled {
@@ -355,66 +357,52 @@
 }
 
 /* Task Cards */
-.empty-tasks {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 48px 16px;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-.empty-tasks svg {
-  opacity: 0.3;
-}
-
-.empty-tasks p {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.empty-tasks span {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
 .task-cards {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  max-height: calc(100vh - 360px);
   overflow-y: auto;
-  max-height: calc(100vh - 300px);
+  padding-right: 4px;
+}
+
+.task-cards::-webkit-scrollbar {
+  width: 4px;
+}
+
+.task-cards::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
 }
 
 .task-card {
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-left: 3px solid var(--primary);
+  border-radius: 6px;
   padding: 12px;
   transition: all 0.2s;
 }
 
 .task-card:hover {
-  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .task-card.pushed {
   opacity: 0.6;
-  border-color: #22c55e;
+  border-left-color: #22c55e;
 }
 
 .task-card.priority-urgent {
-  border-left: 3px solid #ef4444;
+  border-left-color: #ef4444;
 }
 
 .task-card.priority-high {
-  border-left: 3px solid #f59e0b;
+  border-left-color: #f59e0b;
 }
 
 .task-card.priority-low {
-  border-left: 3px solid #6b7280;
+  border-left-color: #9ca3af;
 }
 
 .task-card-header {
@@ -425,14 +413,11 @@
 }
 
 .priority-badge {
-  font-size: 0.7rem;
   padding: 2px 8px;
   border-radius: 4px;
-  font-weight: 600;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  font-weight: 600;
 }
 
 .priority-badge.urgent {
@@ -441,8 +426,8 @@
 }
 
 .priority-badge.high {
-  background: rgba(251, 146, 60, 0.1);
-  color: #fb923c;
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
 }
 
 .priority-badge.normal {
@@ -451,8 +436,8 @@
 }
 
 .priority-badge.low {
-  background: rgba(107, 114, 128, 0.1);
-  color: #6b7280;
+  background: rgba(156, 163, 175, 0.1);
+  color: #9ca3af;
 }
 
 .remove-task-btn {
@@ -461,15 +446,10 @@
   padding: 4px;
   cursor: pointer;
   color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
+  transition: color 0.2s;
 }
 
 .remove-task-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
 }
 
@@ -483,61 +463,76 @@
 .task-notes {
   font-size: 0.8rem;
   color: var(--text-muted);
-  margin: 0 0 12px 0;
   line-height: 1.4;
+  margin-bottom: 10px;
 }
 
-.push-btn,
-.pushed-badge {
-  padding: 6px 12px;
+.push-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
 
-.push-btn {
-  background: var(--primary);
-  border: 1px solid var(--primary);
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
 .push-btn:hover {
-  opacity: 0.9;
+  background: var(--primary-dark);
 }
 
 .pushed-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
   background: rgba(34, 197, 94, 0.1);
-  border: 1px solid #22c55e;
   color: #22c55e;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
-/* Footer Note */
+/* Empty Tasks */
+.empty-tasks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 16px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.empty-tasks svg {
+  opacity: 0.5;
+}
+
+.empty-tasks p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.empty-tasks span {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Footer */
 .footer-note {
   text-align: center;
   font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 16px;
   opacity: 0.7;
-}
-
-/* Mobile */
-@media (max-width: 900px) {
-  .parking-lot.compact {
-    padding: 8px;
-  }
-  
-  .parking-split {
-    gap: 12px;
-  }
-  
-  .dictation-panel,
-  .tasks-panel {
-    padding: 12px;
-  }
 }
