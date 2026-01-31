@@ -31,33 +31,6 @@ function App() {
   const [showTaskModal, setShowTaskModal] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
 
-  useEffect(() => {
-    if (!isUnlocked) return
-
-    // Request notification permission
-    requestNotificationPermission()
-
-    loadTasks()
-    loadMessages()
-    
-    const tasksChannel = supabase
-      .channel('tasks-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, handleTaskChange)
-      .subscribe()
-
-    const messagesChannel = supabase
-      .channel('messages-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, handleMessageChange)
-      .subscribe()
-
-    setIsConnected(true)
-
-    return () => {
-      supabase.removeChannel(tasksChannel)
-      supabase.removeChannel(messagesChannel)
-    }
-  }, [isUnlocked])
-
   const loadTasks = async () => {
     const { data, error } = await supabase
       .from('tasks')
@@ -241,6 +214,33 @@ function App() {
     setEditingTask(null)
     setShowTaskModal(true)
   }
+
+  useEffect(() => {
+    if (!isUnlocked) return
+
+    // Request notification permission
+    requestNotificationPermission()
+
+    loadTasks()
+    loadMessages()
+    
+    const tasksChannel = supabase
+      .channel('tasks-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, handleTaskChange)
+      .subscribe()
+
+    const messagesChannel = supabase
+      .channel('messages-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, handleMessageChange)
+      .subscribe()
+
+    setIsConnected(true)
+
+    return () => {
+      supabase.removeChannel(tasksChannel)
+      supabase.removeChannel(messagesChannel)
+    }
+  }, [isUnlocked])
 
   if (!isUnlocked) {
     return <PasscodeGate onUnlock={() => setIsUnlocked(true)} />

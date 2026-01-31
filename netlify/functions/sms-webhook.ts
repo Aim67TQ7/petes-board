@@ -11,6 +11,8 @@ const ALLOWED_NUMBERS = [
 const SUPABASE_URL = "https://ezlmmegowggujpcnzoda.supabase.co";
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
 
+// Interface for Twilio message payload (for reference)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface TwilioMessage {
   From: string;
   To: string;
@@ -74,7 +76,8 @@ export const handler: Handler = async (event: HandlerEvent) => {
   const params = new URLSearchParams(event.body || "");
   const from = params.get("From") || "";
   const body = params.get("Body") || "";
-  const messageSid = params.get("MessageSid") || "";
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const messageSid = params.get("MessageSid") || ""; // Reserved for future audit logging
 
   console.log(`SMS received from ${from}: ${body.substring(0, 50)}...`);
 
